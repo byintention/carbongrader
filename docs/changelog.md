@@ -9,6 +9,11 @@ See `.cursor/rules/200-changelog.mdc` for the workflow.
 ## [Unreleased]
 
 ### Added
+- 2026-07-07 — Phase 2 carbon model and scoring (JS): `carbon.js` wraps vendored
+  CO2.js `perVisit()` and maps grams to SWD carbon bands; `score.js` computes
+  the weighted composite EcoGrade (0–100 + letter) from the PHP result payload
+  using `scoring-config.js` (mirrors `config/scoring.json`). 17 offline Node
+  tests (`CarbonTest.mjs`, `ScoreTest.mjs`); `npm test` runs PHP + JS suites (82).
 - 2026-07-07 — Async grading endpoint (P1.5), completing the PHP backend
   (Phase 1): `GradeService` orchestrates validate → rate-limit → cache → job
   create/poll with a single-flight run-on-poll; `config.php` loads `.env` (no

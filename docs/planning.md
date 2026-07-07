@@ -35,11 +35,12 @@ the carbon model, **UIKit 3** frontend. **No build system** (Prepros only).
   `RateLimiter` + shared `Fs`, 14 offline tests.
 - [x] **P1.5** done (2026-07-07) — async endpoint: `GradeService` + `config.php`
   + `grade.php`, parallel upstreams via `curl_multi`. **Phase 1 complete.**
-- [~] **P2.1** — Next up: CO2.js `perVisit` wrapper + carbon band mapping (JS).
+- [x] **Phase 2 complete** (2026-07-07) — `carbon.js` (perVisit + bands) and
+  `score.js` (composite EcoGrade). 17 JS tests; full suite **82**.
+- [~] **P3.1** — Next up: UIKit app shell + URL form + poll client.
 
-> Phase 1 status: 7 test files, **65 offline tests** passing; `grade.php`
-> HTTP-smoke-tested for validation/routing/error paths. Live PSI still needs the
-> API key in `.env`.
+> Phase 1 status: 7 PHP test files, 65 tests. Phase 2: 2 JS test files, 17 tests.
+> Run all via `npm test` (no install required).
 
 > Decisions locked (2026-06-09): browser-side CO2.js · single-URL scope for v1.
 > Decisions locked (2026-06-10): carbon via CO2.js `**perVisit`** · **async
@@ -126,16 +127,18 @@ within a phase are mutually exclusive; phases are ordered by dependency.
   - Note: `Json.php` from the original plan was unnecessary — JSON emission lives
   in `grade.php`'s `cg_emit()`.
 
-### Phase 2 — Carbon model & scoring (JS)
+### Phase 2 — Carbon model & scoring (JS)  ✅ (2026-07-07)
 
-- **P2.1 CO2.js wrapper**
-  - AC: imports vendored CO2.js; `perVisit(bytes, green)` → grams; maps grams →
-  SWD band (config §6.1).
-  - Files: `src/js/carbon.js`, `src/js/vendor/co2.js`.
-- **P2.2 Composite EcoGrade**
-  - AC: pure function combining carbon/perf/hosting/weight per `scoring.json`
-  weights → 0–100 + letter; unit-tested.
-  - Files: `src/js/score.js`.
+- [x] **P2.1 CO2.js wrapper**
+  - Done: `estimateGramsPerVisit()` via vendored CO2.js `perVisit()`;
+  `carbonBandForGrams()` + `analyzeCarbon()` map to SWD bands from config.
+  7 tests via `node tests/CarbonTest.mjs`.
+  - Files: `src/js/carbon.js`, `src/js/scoring-config.js`.
+- [x] **P2.2 Composite EcoGrade**
+  - Done: pure `gradeResult()` combining carbon/perf/hosting/efficiency per
+  `scoring.json` weights → composite 0–100 + letter; sub-score helpers exported.
+  10 tests via `node tests/ScoreTest.mjs`.
+  - Files: `src/js/score.js`, `tests/CarbonTest.mjs`, `tests/ScoreTest.mjs`.
 
 ### Phase 3 — Frontend (UIKit)
 
