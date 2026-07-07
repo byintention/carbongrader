@@ -1,0 +1,36 @@
+---
+description: Global workflow and state-tracking enforcement for CarbonGrader
+alwaysApply: true
+---
+
+# Planning & State Tracking
+
+`docs/planning.md` is the single source of truth for what is being worked on.
+
+## Workflow (every task)
+
+1. **Read first**: Open `docs/planning.md` before starting any work to load the
+   current roadmap, the active task, and the MECE breakdown.
+2. **Plan before code**: For any non-trivial change, write or update the MECE
+   (Mutually Exclusive, Collectively Exhaustive) task breakdown in
+   `docs/planning.md` so subtasks don't overlap and nothing is missed.
+3. **Track state**: Keep exactly one task marked `IN PROGRESS`. Move finished
+   items to `DONE` with the date.
+4. **Close the loop**: When a task is complete, update `docs/planning.md`, then
+   follow `200-changelog.mdc` to record the change.
+
+## Status markers
+
+Use these consistently in `docs/planning.md`:
+
+- `[ ]` TODO
+- `[~]` IN PROGRESS (max one at a time)
+- `[x]` DONE
+- `[!]` BLOCKED (note the blocker)
+
+## Rules
+
+- Never start coding a feature that is not represented as a task in
+  `docs/planning.md`. Add it first.
+- If scope grows mid-task, pause and update the breakdown before continuing.
+- Keep tasks small enough to finish in a single focused session.

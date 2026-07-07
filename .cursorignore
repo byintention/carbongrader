@@ -1,0 +1,26 @@
+# Keep the AI focused on source — exclude noise, builds, and secrets.
+
+# Dependencies
+node_modules/
+
+# Prepros / build artifacts (no bundler; these are tool outputs only)
+dist/
+build/
+.prepros/
+prepros.config
+*.map
+
+# Logs & caches
+*.log
+.cache/
+.tmp/
+
+# Environment & secrets
+.env
+.env.*
+*.pem
+*.key
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db

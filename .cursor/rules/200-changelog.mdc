@@ -1,0 +1,42 @@
+---
+description: Automated versioning and changelog enforcement
+alwaysApply: true
+---
+
+# Changelog & Versioning
+
+`docs/changelog.md` is the standardized transaction history of the repository.
+Update it as part of completing any user-facing or notable change.
+
+## Format
+
+Follow [Keep a Changelog](https://keepachangelog.com/) and
+[Semantic Versioning](https://semver.org/) (`MAJOR.MINOR.PATCH`).
+
+- New work accumulates under an `## [Unreleased]` heading.
+- Group entries under: `Added`, `Changed`, `Fixed`, `Removed`, `Security`.
+- On release, rename `[Unreleased]` to `## [x.y.z] - YYYY-MM-DD` and start a
+  fresh `[Unreleased]` block. Bump the `version` field in `package.json` to
+  match.
+
+## When to bump
+
+- `PATCH`: bug fixes, no API/behavior change.
+- `MINOR`: backwards-compatible features.
+- `MAJOR`: breaking changes.
+
+## Entry style
+
+Prefix every entry with its date (`YYYY-MM-DD — `) so each change is dated, not
+just each release.
+
+```
+## [Unreleased]
+### Added
+- 2026-07-07 — Grade breakdown export to CSV.
+### Fixed
+- 2026-07-07 — Incorrect rounding in the carbon score calculation.
+```
+
+Keep entries concise and written for humans (the "why", not a diff dump).
+Every commit that changes behavior should leave a trace here.

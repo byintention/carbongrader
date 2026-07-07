@@ -1,0 +1,14 @@
+{
+  "captchaResult": "CAPTCHA_NOT_NEEDED",
+  "id": "https://unreachable.example/",
+  "lighthouseResult": {
+    "requestedUrl": "https://unreachable.example/",
+    "runtimeError": {
+      "code": "ERRORED_DOCUMENT_REQUEST",
+      "message": "Lighthouse was unable to reliably load the page you requested."
+    },
+    "categories": {},
+    "audits": {}
+  },
+  "analysisUTCTimestamp": "2026-07-07T12:00:00.000Z"
+}

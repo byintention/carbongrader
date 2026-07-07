@@ -1,0 +1,8 @@
+@tgwf/co2 0.18.0
+source: https://cdn.jsdelivr.net/npm/@tgwf/co2@0.18.0/+esm
+vendored: 2026-06-10
+notes: Prebuilt ESM bundle (jsDelivr/Rollup). Self-contained, no runtime CDN.
+       Exports: co2 (used), hosting, averageIntensity, marginalIntensity, electricityMaps.
+       Import as: import { co2 } from "./vendor/co2.js";
+       To update: re-download a pinned @tgwf/co2@<version>/+esm and update this file
+       (no npm install, no build step).

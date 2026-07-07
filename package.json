@@ -1,0 +1,26 @@
+{
+  "name": "carbongrader",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Bundler-free web app that grades a web page's sustainability (CO2.js + Green Web Foundation + PageSpeed Insights).",
+  "type": "module",
+  "scripts": {
+    "start": "php -S localhost:8000 -t src",
+    "serve": "php -S localhost:8000 -t src"
+  },
+  "engines": {
+    "php": ">=8.1"
+  },
+  "keywords": [
+    "carbon",
+    "sustainability",
+    "website-carbon",
+    "co2js",
+    "pagespeed",
+    "green-hosting",
+    "no-build",
+    "php",
+    "uikit"
+  ],
+  "license": "MIT"
+}

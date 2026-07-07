@@ -1,0 +1,67 @@
+{
+  "captchaResult": "CAPTCHA_NOT_NEEDED",
+  "id": "https://example.com/",
+  "lighthouseResult": {
+    "requestedUrl": "https://example.com/",
+    "finalUrl": "https://example.com/",
+    "lighthouseVersion": "12.0.0",
+    "categories": {
+      "performance": {
+        "id": "performance",
+        "title": "Performance",
+        "score": 0.82
+      }
+    },
+    "audits": {
+      "total-byte-weight": {
+        "id": "total-byte-weight",
+        "title": "Avoid enormous network payloads",
+        "numericValue": 1843200,
+        "numericUnit": "byte"
+      },
+      "server-response-time": {
+        "id": "server-response-time",
+        "title": "Initial server response time was short",
+        "numericValue": 120,
+        "details": { "type": "table", "items": [] }
+      },
+      "uses-optimized-images": {
+        "id": "uses-optimized-images",
+        "title": "Efficiently encode images",
+        "numericValue": 1200,
+        "details": { "type": "opportunity", "overallSavingsMs": 1200, "overallSavingsBytes": 240000 }
+      },
+      "unused-javascript": {
+        "id": "unused-javascript",
+        "title": "Reduce unused JavaScript",
+        "numericValue": 800,
+        "details": { "type": "opportunity", "overallSavingsMs": 800, "overallSavingsBytes": 90000 }
+      },
+      "render-blocking-resources": {
+        "id": "render-blocking-resources",
+        "title": "Eliminate render-blocking resources",
+        "details": { "type": "opportunity", "overallSavingsMs": 0 }
+      },
+      "network-requests": {
+        "id": "network-requests",
+        "title": "Network Requests",
+        "details": {
+          "type": "table",
+          "items": [
+            { "url": "https://example.com/", "resourceType": "Document", "transferSize": 25000, "mimeType": "text/html" },
+            { "url": "https://example.com/app.js", "resourceType": "Script", "transferSize": 300000, "mimeType": "text/javascript" },
+            { "url": "https://example.com/vendor.js", "resourceType": "Script", "transferSize": 120000, "mimeType": "text/javascript" },
+            { "url": "https://example.com/hero.jpg", "resourceType": "Image", "transferSize": 600000, "mimeType": "image/jpeg" },
+            { "url": "https://example.com/logo.png", "resourceType": "Image", "transferSize": 280000, "mimeType": "image/png" },
+            { "url": "https://example.com/icon.png", "resourceType": "Image", "transferSize": 100000, "mimeType": "image/png" },
+            { "url": "https://example.com/style.css", "resourceType": "Stylesheet", "transferSize": 60000, "mimeType": "text/css" },
+            { "url": "https://example.com/font-a.woff2", "resourceType": "Font", "transferSize": 100000, "mimeType": "font/woff2" },
+            { "url": "https://example.com/font-b.woff2", "resourceType": "Font", "transferSize": 80000, "mimeType": "font/woff2" },
+            { "url": "https://example.com/beacon", "resourceType": "Ping", "transferSize": 500, "mimeType": "text/plain" }
+          ]
+        }
+      }
+    }
+  },
+  "analysisUTCTimestamp": "2026-07-07T12:00:00.000Z"
+}

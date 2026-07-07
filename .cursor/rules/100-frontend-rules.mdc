@@ -1,0 +1,37 @@
+---
+description: UI / CSS framework constraints for the web app
+globs: src/**/*.{html,htm,pug,css,scss,sass,js,mjs}
+alwaysApply: false
+---
+
+# Frontend Constraints
+
+Keep the frontend lightweight, accessible, and bundler-free (see
+`050-tooling.mdc`).
+
+## Structure
+
+- Semantic HTML5. One clear landmark structure (`header`, `main`, `footer`).
+- Separate concerns: markup in HTML/Pug, styles in CSS/Sass, behaviour in JS.
+- ES modules (`<script type="module">`); no global script soup.
+
+## CSS
+
+- Mobile-first, responsive layouts (Flexbox/Grid). Avoid fixed pixel widths
+  for containers.
+- Use CSS custom properties (design tokens) for color, spacing, and type.
+- Prefer a small, hand-rolled stylesheet or a no-build framework. Do **not**
+  pull in Tailwind/Bootstrap via a build step.
+- Respect `prefers-reduced-motion` and `prefers-color-scheme`.
+
+## Accessibility
+
+- All interactive elements keyboard-reachable with visible focus states.
+- Label every form control; use ARIA only when native semantics fall short.
+- Maintain WCAG AA color contrast.
+
+## Performance
+
+- No heavy frameworks for what plain DOM APIs can do.
+- Lazy-load non-critical assets; keep total JS small.
+- Optimize images before committing (size + format).

@@ -1,0 +1,49 @@
+{
+  "$comment": "Deterministic result->tip mapping consumed by the recommendations engine (P4). Seed rules; tunable.",
+  "version": 1,
+  "rules": [
+    {
+      "id": "non-green-host",
+      "when": { "hostingGreen": false },
+      "title": "Switch to a green host",
+      "why": "Hosting on renewable energy directly lowers a page's carbon footprint.",
+      "impact": "high"
+    },
+    {
+      "id": "heavy-images",
+      "when": { "resourceTypeOverKB": { "type": "image", "kb": 500 } },
+      "title": "Optimise images",
+      "why": "Large images are usually the biggest source of transfer bytes. Compress and use next-gen formats (AVIF/WebP) and responsive sizes.",
+      "impact": "high"
+    },
+    {
+      "id": "heavy-scripts",
+      "when": { "resourceTypeOverKB": { "type": "script", "kb": 300 } },
+      "title": "Reduce JavaScript",
+      "why": "Heavy JS increases bytes and CPU. Remove unused code, defer non-critical scripts, and question large frameworks.",
+      "impact": "medium"
+    },
+    {
+      "id": "heavy-fonts",
+      "when": { "resourceTypeOverKB": { "type": "font", "kb": 150 } },
+      "title": "Trim web fonts",
+      "why": "Subset fonts, limit weights/styles, and prefer system fonts where possible.",
+      "impact": "low"
+    },
+    {
+      "id": "over-budget",
+      "when": { "totalMBOver": 2.0 },
+      "title": "Cut overall page weight",
+      "why": "The page exceeds a healthy weight budget. Reducing total transfer is the most direct lever on carbon.",
+      "impact": "high"
+    },
+    {
+      "id": "psi-opportunities",
+      "when": { "opportunitiesPresent": true },
+      "title": "Apply top PageSpeed opportunities",
+      "why": "Lighthouse lists specific, prioritised fixes. Address the highest-savings items first.",
+      "impact": "varies",
+      "source": "psi"
+    }
+  ]
+}

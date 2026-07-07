@@ -1,0 +1,33 @@
+---
+description: Tooling constraints — no bundlers/build systems, use Prepros
+alwaysApply: true
+---
+
+# Tooling: No Build Systems
+
+This project ships source that runs directly in the browser. **Do not introduce
+bundlers or build pipelines** (no Webpack, Vite, Rollup, esbuild, Parcel,
+Babel, Next.js, etc.).
+
+## Use instead
+
+- **Prepros** handles compiling/processing (Sass, Pug, autoprefix, live reload,
+  minification on export). Treat Prepros as the only "build" step.
+- Author files that Prepros watches in `src/`. Reference compiled output the
+  way Prepros is configured to emit it.
+- Plain ES modules (`<script type="module">`) are fine — they need no bundler.
+
+## Do not
+
+- Add `dependencies`/`devDependencies` that require a compile/bundle step to
+  run in the browser.
+- Add npm scripts like `build`, `bundle`, or `webpack`.
+- Commit a `dist/`, `.next/`, or bundler cache.
+
+## package.json
+
+`package.json` exists for metadata and lightweight dev tooling only (e.g. a
+static file server, linters). It is **not** a build entry point.
+
+If a task seems to require a bundler, stop and flag it in `docs/planning.md`
+rather than adding one silently.

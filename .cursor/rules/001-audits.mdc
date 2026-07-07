@@ -1,0 +1,40 @@
+---
+description: Code quality, linting, and security review enforcement
+alwaysApply: true
+---
+
+# Audits: Quality, Lint & Security
+
+`docs/audits.md` records the history of performance, technical-debt, and
+security checks. Append to it; never overwrite history.
+
+## Before committing
+
+- **Lint clean**: Resolve all linter/formatter warnings for files you touched.
+  Do not disable rules to silence them without a noted justification.
+- **No secrets**: Never commit API keys, tokens, `.env`, or credentials.
+  Confirm against `.cursorignore` and `package.json` scripts.
+- **Dependencies**: Prefer zero/few runtime dependencies. Justify any new
+  dependency in `docs/audits.md` (why, size, alternatives considered).
+
+## Security checklist (web app)
+
+- Sanitize and validate all user input before use or display.
+- Escape dynamic content inserted into the DOM; avoid `innerHTML` with
+  untrusted data. Prefer `textContent` / safe DOM APIs.
+- No inline event handlers or `eval`; respect a strict Content-Security-Policy.
+- Avoid storing sensitive data in `localStorage`.
+
+## Recording an audit
+
+Add an entry to `docs/audits.md` for each meaningful audit:
+
+```
+## YYYY-MM-DD — <area> audit
+- Findings: ...
+- Actions taken / debt logged: ...
+- Follow-ups: ...
+```
+
+Technical debt that is found but not fixed must be logged as a follow-up, not
+left undocumented.

@@ -1,0 +1,25 @@
+node_modules/
+dist/
+build/
+.prepros/
+*.map
+
+# Composer (PHP) deps installed at project root
+/vendor/
+
+# Writable runtime dir (cache/, jobs/, ratelimit/) — keep the folder, ignore contents
+/var/*
+!/var/.gitkeep
+
+*.log
+.cache/
+.tmp/
+
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+.DS_Store
+Thumbs.db
