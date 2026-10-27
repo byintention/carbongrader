@@ -5,8 +5,8 @@
   "description": "Bundler-free web app that grades a web page's sustainability (CO2.js + Green Web Foundation + PageSpeed Insights).",
   "type": "module",
   "scripts": {
-    "start": "php -S localhost:8000 -t src src/router.php",
-    "serve": "php -S localhost:8000 -t src src/router.php",
+    "start": "php -S localhost:8020 -t src src/router.php",
+    "serve": "php -S localhost:8020 -t src src/router.php",
     "test:php": "php tests/UrlValidatorTest.php && php tests/GreencheckClientTest.php && php tests/PageSpeedClientTest.php && php tests/CacheTest.php && php tests/JobStoreTest.php && php tests/RateLimiterTest.php && php tests/GradeServiceTest.php",
     "test:phpunit": "php vendor/bin/phpunit",
     "test:js": "node tests/CarbonTest.mjs && node tests/ScoreTest.mjs && node tests/RecommendationsTest.mjs && node tests/HistoryTest.mjs",

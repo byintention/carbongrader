@@ -24,6 +24,13 @@ Babel, Next.js, etc.).
 - Add npm scripts like `build`, `bundle`, or `webpack`.
 - Commit a `dist/`, `.next/`, or bundler cache.
 
+## Local server
+
+Always serve the app on **port 8020**: `npm start` runs
+`php -S localhost:8020 -t src src/router.php`. Open `http://localhost:8020/`.
+Do not switch the local app to another port. The browser test runner
+(`npm run test:browser`) stays on 8099.
+
 ## package.json
 
 `package.json` exists for metadata and lightweight dev tooling only (e.g. a

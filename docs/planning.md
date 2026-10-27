@@ -43,7 +43,7 @@ the carbon model, **UIKit 3** frontend. **No build system** (Prepros only).
   dashboard. Full suite **91**.
 - [~] **P5.1** — Accessibility, dark mode polish, reduced motion, equal-height metric cards.
 
-> Run the app: `npm start` → open `http://localhost:8000/`. Live grading needs
+> Run the app: `npm start` → open `http://localhost:8020/`. Live grading needs
 > `PAGESPEED_API_KEY` in `.env`. Full suite: `npm test` (91 tests).
 
 > Decisions locked (2026-06-09): browser-side CO2.js · single-URL scope for v1.
@@ -73,7 +73,7 @@ within a phase are mutually exclusive; phases are ordered by dependency.
   - AC: `config/scoring.json` (band points, weights, efficiency budget, letter
   cutoffs from §6.2), `config/recommendations.json`, root `.env.example`
   created; `.env` + `var/` confirmed gitignored; `package.json` `start` =
-  `php -S localhost:8000 -t src`.
+  `php -S localhost:8020 -t src`.
   - Files: `config/*`, `.env.example`, `.gitignore`, `package.json`.
 - [x] **P0.4 Vendor CO2.js** — pinned `@tgwf/co2` 0.18.0 ESM at
   `src/js/vendor/co2.js` (curl from jsDelivr, no npm); version in
@@ -199,6 +199,7 @@ A+–F bands), not `perByte`.
 job runs inline on first poll with a per-URL single-flight lock.
 - **2026-06-10** — CO2.js is **vendored + version-pinned** in `src/js/vendor/`
 (no runtime CDN), for reproducible grades.
+- **2026-10-27** — Local app server is always **port 8020** (`npm start`).
 - **2026-06-10** — Scoring scheme (architecture §6.2) adopted as **provisional**
 seed values (headline = composite 0–100; carbon band as sub-metric); tunable.
 

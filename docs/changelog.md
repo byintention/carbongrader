@@ -68,6 +68,7 @@ See `.cursor/rules/200-changelog.mdc` for the workflow.
   status panel immediately after rendering an error.
 
 ### Changed
+- 2026-10-27 — Local dev server is fixed on port 8020 (`npm start` / `npm run serve`).
 - 2026-06-10 — Pre-build gap review resolved 4 blockers and refined the design:
   carbon now uses CO2.js `perVisit` (matches the per-visit bands); the API is
   async (job + poll) to absorb the slow PageSpeed call; CO2.js is vendored and

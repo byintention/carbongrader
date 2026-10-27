@@ -318,6 +318,6 @@ var/                          # writable, non-public: cache/, jobs/, ratelimit/
 
 ## 14. Dev & run
 
-- Dev server (PHP needed): `php -S localhost:8000 -t src` → open `/index.html`.
+- Dev server (PHP needed): `php -S localhost:8020 -t src src/router.php` → open `http://localhost:8020/`. Local serving always uses port **8020**.
 - Prepros optionally watches `src/assets/css` (Sass) and reloads.
 - No bundler; UIKit + CO2.js load via CDN/ESM.

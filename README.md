@@ -6,10 +6,10 @@ grades it from **A** (low impact) to **F** (very high impact).
 ## Quick start
 
 ```bash
-npm start   # php -S localhost:8000 -t src
+npm start   # php -S localhost:8020 -t src
 ```
 
-Open `http://localhost:8000/`, enter a URL, and grade it. Copy `.env.example` to
+Open `http://localhost:8020/`, enter a URL, and grade it. Copy `.env.example` to
 `.env` and set `PAGESPEED_API_KEY` for live PageSpeed results.
 
 ```bash
