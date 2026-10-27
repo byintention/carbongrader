@@ -1,15 +1,17 @@
 {
   "name": "carbongrader",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Bundler-free web app that grades a web page's sustainability (CO2.js + Green Web Foundation + PageSpeed Insights).",
   "type": "module",
   "scripts": {
-    "start": "php -S localhost:8000 -t src",
-    "serve": "php -S localhost:8000 -t src",
+    "start": "php -S localhost:8000 -t src src/router.php",
+    "serve": "php -S localhost:8000 -t src src/router.php",
     "test:php": "php tests/UrlValidatorTest.php && php tests/GreencheckClientTest.php && php tests/PageSpeedClientTest.php && php tests/CacheTest.php && php tests/JobStoreTest.php && php tests/RateLimiterTest.php && php tests/GradeServiceTest.php",
-    "test:js": "node tests/CarbonTest.mjs && node tests/ScoreTest.mjs",
-    "test": "npm run test:php && npm run test:js"
+    "test:phpunit": "php vendor/bin/phpunit",
+    "test:js": "node tests/CarbonTest.mjs && node tests/ScoreTest.mjs && node tests/RecommendationsTest.mjs && node tests/HistoryTest.mjs",
+    "test:browser": "php -S localhost:8099 -t . tests/dev-router.php",
+    "test": "npm run test:php && npm run test:phpunit && npm run test:js"
   },
   "engines": {
     "php": ">=8.1"

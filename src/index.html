@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CarbonGrader — grade a web page's sustainability (carbon, hosting, performance)." />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://cdn.jsdelivr.net; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <title>CarbonGrader</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/css/uikit.min.css" />
+  <link rel="stylesheet" href="assets/css/app.css" />
+</head>
+<body>
+  <a class="cg-skip" href="#main">Skip to content</a>
+  <header class="uk-section uk-section-xsmall uk-section-muted">
+    <div class="uk-container uk-container-small uk-text-center">
+      <h1 class="uk-heading-medium uk-margin-remove">Carbon<span class="cg-brand">Grader</span></h1>
+      <p class="uk-text-meta uk-margin-remove-top">Grade a web page's carbon footprint, hosting, and performance.</p>
+    </div>
+  </header>
+
+  <main id="main" class="uk-section uk-section-small">
+    <div class="uk-container uk-container-small">
+      <section class="uk-card uk-card-default uk-card-body" aria-labelledby="form-heading">
+        <h2 id="form-heading" class="uk-card-title">Analyze a URL</h2>
+        <form id="grade-form" novalidate>
+          <div class="uk-margin">
+            <label class="uk-form-label" for="url-input">Website URL</label>
+            <input
+              class="uk-input"
+              type="url"
+              id="url-input"
+              name="url"
+              placeholder="https://example.com"
+              autocomplete="url"
+              inputmode="url"
+              required
+            />
+          </div>
+
+          <fieldset class="uk-fieldset uk-margin">
+            <legend class="uk-legend uk-text-small">PageSpeed strategy</legend>
+            <div class="cg-choices">
+              <label><input class="uk-radio" type="radio" name="strategy" value="mobile" checked /> Mobile</label>
+              <label><input class="uk-radio" type="radio" name="strategy" value="desktop" /> Desktop</label>
+            </div>
+          </fieldset>
+
+          <button type="submit" class="uk-button uk-button-primary uk-width-1-1" id="submit-btn">
+            Grade it
+          </button>
+          <p class="uk-text-meta uk-margin-small-top uk-margin-remove-bottom">
+            The URL is sent to Google PageSpeed Insights and the Green Web Foundation.
+            This server keeps a short-lived copy so the same page is not looked up twice.
+          </p>
+        </form>
+      </section>
+
+      <section id="history-panel" class="uk-margin-top" hidden aria-labelledby="history-heading"></section>
+
+      <div id="status-panel" class="uk-margin-top" hidden aria-live="polite"></div>
+
+      <section
+        id="results-panel"
+        class="uk-margin-top"
+        hidden
+        tabindex="-1"
+        aria-label="Results"
+      ></section>
+    </div>
+  </main>
+
+  <footer class="uk-section uk-section-xsmall uk-text-center uk-text-meta">
+  <div class="uk-container cg-privacy">
+    <p>
+      Powered by
+      <a href="https://www.thegreenwebfoundation.org/co2js/" rel="noopener noreferrer">CO2.js</a>
+      (Apache-2.0),
+      <a href="https://www.thegreenwebfoundation.org/green-web-datasets/" rel="noopener noreferrer">Green Web Foundation</a>
+      Greencheck,
+      <a href="https://developers.google.com/speed/docs/insights/v5/about" rel="noopener noreferrer">Google PageSpeed Insights</a>,
+      and
+      <a href="https://getuikit.com/" rel="noopener noreferrer">UIKit</a>
+      (MIT).
+    </p>
+    <p class="uk-margin-remove">
+      Recent grades stay in this browser. CarbonGrader is an independent project and is not affiliated with Ecograder.
+    </p>
+  </div>
+  </footer>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

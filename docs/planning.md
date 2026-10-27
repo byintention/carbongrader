@@ -37,10 +37,14 @@ the carbon model, **UIKit 3** frontend. **No build system** (Prepros only).
   + `grade.php`, parallel upstreams via `curl_multi`. **Phase 1 complete.**
 - [x] **Phase 2 complete** (2026-07-07) — `carbon.js` (perVisit + bands) and
   `score.js` (composite EcoGrade). 17 JS tests; full suite **82**.
-- [~] **P3.1** — Next up: UIKit app shell + URL form + poll client.
+- [x] **Phase 3 complete** (2026-07-07) — UIKit shell, poll client, results
+  dashboard (`index.html`, `api.js`, `main.js`, `ui.js`, `app.css`).
+- [x] **Phase 4 complete** (2026-10-14) — recommendation mapping on the results
+  dashboard. Full suite **91**.
+- [~] **P5.1** — Accessibility, dark mode polish, reduced motion, equal-height metric cards.
 
-> Phase 1 status: 7 PHP test files, 65 tests. Phase 2: 2 JS test files, 17 tests.
-> Run all via `npm test` (no install required).
+> Run the app: `npm start` → open `http://localhost:8000/`. Live grading needs
+> `PAGESPEED_API_KEY` in `.env`. Full suite: `npm test` (91 tests).
 
 > Decisions locked (2026-06-09): browser-side CO2.js · single-URL scope for v1.
 > Decisions locked (2026-06-10): carbon via CO2.js `**perVisit`** · **async
@@ -140,24 +144,34 @@ within a phase are mutually exclusive; phases are ordered by dependency.
   10 tests via `node tests/ScoreTest.mjs`.
   - Files: `src/js/score.js`, `tests/CarbonTest.mjs`, `tests/ScoreTest.mjs`.
 
-### Phase 3 — Frontend (UIKit)
+### Phase 3 — Frontend (UIKit)  ✅ (2026-07-07)
 
-- **P3.1 App shell + URL form + poll client**
-  - AC: UIKit loaded via CDN; accessible form; mobile default + desktop opt-in;
-  `api.js` creates a job then polls with backoff; honest "~30s" progress,
-  empty, and error states.
-  - Files: `src/index.html`, `src/js/main.js`, `src/js/api.js`.
-- **P3.2 Results dashboard**
-  - AC: shows EcoGrade, carbon/view, green-host badge, perf score, page weight,
-  and resource breakdown (UIKit components); all dynamic text escaped.
+- [x] **P3.1 App shell + URL form + poll client**
+  - Done: UIKit 3.21.6 via CDN; accessible URL form with mobile/desktop strategy;
+  `api.js` POST create + poll with exponential backoff (2–8s, 120s timeout);
+  `main.js` orchestrates loading (~30s message), error, and abort on re-submit.
+  - Files: `src/index.html`, `src/js/main.js`, `src/js/api.js`, `src/js/config.js`.
+- [x] **P3.2 Results dashboard**
+  - Done: `ui.js` renders composite EcoGrade badge, carbon/visit + band, perf,
+  page weight, green-host badge (incl. unverified), resource breakdown bars,
+  component score breakdown; all dynamic text via `textContent`.
   - Files: `src/js/ui.js`, `src/assets/css/app.css`.
 
-### Phase 4 — Recommendations
+### Phase 4 — Recommendations  ✅ (2026-10-14)
 
-- **P4.1 Recommendation mapping**
-  - AC: deterministic tips from hosting/weight/PSI opportunities via
-  `recommendations.json`; sorted by estimated impact.
-  - Files: `src/js/ui.js`, `config/recommendations.json`.
+- [x] **P4.1 Recommendation mapping** (2026-10-14)
+  - Done: `mapRecommendations()` reads `config/recommendations.json` (mirrored
+  in `recommendations-config.js`, because `config/` is outside the docroot).
+  A grey-host tip requires a verified Greencheck. Image, script, font, and
+  page-weight rules use strict thresholds; the weight tip lists the heaviest
+  resource types. The top 3 PageSpeed opportunities become individual tips,
+  ranked from `savingsMs`. The dashboard shows them under "What to improve",
+  highest impact first. 9 offline tests (`RecommendationsTest.mjs`).
+  - Also fixed: grade failures stay on screen. The submit handler was clearing
+  the status panel in `finally`, which wiped the error just rendered.
+  - Files: `src/js/recommendations.js`, `src/js/recommendations-config.js`,
+  `src/js/ui.js`, `src/js/main.js`, `src/assets/css/app.css`,
+  `config/recommendations.json`, `tests/RecommendationsTest.mjs`, `package.json`.
 
 ### Phase 5 — Polish, hardening & docs
 

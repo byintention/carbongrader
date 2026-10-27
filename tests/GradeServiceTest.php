@@ -204,6 +204,8 @@ check('analyzer failure -> job error (ok:true, status:error)', function () use (
     assertSame(true, $poll['ok']);
     assertSame('error', $poll['status']);
     assertSame('PSI_ANALYSIS_FAILED', $poll['error']['code']);
+    assertSame(GradeService::publicUpstreamMessage('PSI_ANALYSIS_FAILED'), $poll['error']['message']);
+    assertTrue(!str_contains((string) $poll['error']['message'], 'boom'));
     // Errored job stays errored on re-poll.
     $again = $svc->poll($create['id']);
     assertSame('error', $again['status']);

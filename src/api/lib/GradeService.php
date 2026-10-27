@@ -139,7 +139,8 @@ final class GradeService
 
             return ['ok' => true, 'id' => $id, 'status' => 'done', 'result' => $result];
         } catch (UpstreamException $e) {
-            $error = ['code' => $e->errorCode, 'message' => $e->getMessage()];
+            // Provider text can include quota details and project ids. Store a fixed line.
+            $error = ['code' => $e->errorCode, 'message' => self::publicUpstreamMessage($e->errorCode)];
             $this->jobs->update($id, ['status' => 'error', 'error' => $error]);
             return ['ok' => true, 'id' => $id, 'status' => 'error', 'error' => $error];
         } finally {
@@ -162,6 +163,19 @@ final class GradeService
     {
         $strategy = is_string($strategy) ? strtolower($strategy) : '';
         return in_array($strategy, self::STRATEGIES, true) ? $strategy : $this->defaultStrategy;
+    }
+
+    /**
+     * User-facing copy for an upstream failure. Never echoes the provider body.
+     */
+    public static function publicUpstreamMessage(string $code): string
+    {
+        return match ($code) {
+            'RATE_LIMITED' => 'PageSpeed quota is used up for now. Try again later.',
+            'TIMEOUT' => 'The analysis timed out. Try again.',
+            'PSI_ANALYSIS_FAILED' => 'PageSpeed could not analyze this page. It may be blocked or unavailable.',
+            default => 'A data source could not be reached. Try again in a moment.',
+        };
     }
 
     /** @return array<string,mixed> */

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CarbonGrader browser specs</title>
+</head>
+<body>
+  <pre id="out">Running…</pre>
+  <script type="module">
+    import { gradeResult } from "/src/js/score.js";
+    import scoringConfig from "/src/js/scoring-config.js";
+    import { mapRecommendations } from "/src/js/recommendations.js";
+    import recommendationsConfig from "/src/js/recommendations-config.js";
+    import { loadHistory, rememberResult, shareQuery } from "/src/js/history.js";
+
+    const lines = [];
+    let failed = 0;
+
+    function check(name, fn) {
+      try {
+        fn();
+        lines.push(`ok  - ${name}`);
+      } catch (error) {
+        failed++;
+        lines.push(`FAIL - ${name}: ${error.message}`);
+      }
+    }
+
+    function assertSame(expected, actual) {
+      if (expected !== actual) {
+        throw new Error(`expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+      }
+    }
+
+    const result = {
+      url: "https://example.com/",
+      host: "example.com",
+      strategy: "mobile",
+      hosting: { green: false, hostedBy: null, verified: false },
+      page: { totalBytes: 3 * 1024 * 1024, performanceScore: 0.4, resources: [] },
+      opportunities: [],
+    };
+
+    check("gradeResult returns a letter", () => {
+      const eco = gradeResult(result, scoringConfig);
+      if (!eco.compositeGrade) throw new Error("missing grade");
+    });
+
+    check("unverified host does not suggest switching", () => {
+      const tips = mapRecommendations(result, recommendationsConfig);
+      if (tips.some((tip) => tip.id === "non-green-host")) {
+        throw new Error("host tip fired");
+      }
+    });
+
+    check("history round-trip in a memory store", () => {
+      const data = new Map();
+      const storage = {
+        getItem: (key) => (data.has(key) ? data.get(key) : null),
+        setItem: (key, value) => data.set(key, String(value)),
+        removeItem: (key) => data.delete(key),
+      };
+      rememberResult(result, storage);
+      assertSame("https://example.com/", loadHistory(storage)[0].result.url);
+      assertSame("url=https%3A%2F%2Fexample.com%2F&strategy=mobile", shareQuery(result.url, result.strategy));
+    });
+
+    const out = document.getElementById("out");
+    out.textContent = lines.join("\n");
+    document.title = failed === 0 ? "PASS" : "FAIL";
+  </script>
+</body>
+</html>

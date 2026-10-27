@@ -1,10 +1,10 @@
 {
-  "$comment": "Deterministic result->tip mapping consumed by the recommendations engine (P4). Seed rules; tunable.",
+  "$comment": "Deterministic result->tip mapping consumed by src/js/recommendations.js (P4). Seed rules; tunable. A grey-host tip also requires hostingVerified so a failed Greencheck does not recommend switching hosts.",
   "version": 1,
   "rules": [
     {
       "id": "non-green-host",
-      "when": { "hostingGreen": false },
+      "when": { "hostingGreen": false, "hostingVerified": true },
       "title": "Switch to a green host",
       "why": "Hosting on renewable energy directly lowers a page's carbon footprint.",
       "impact": "high"
@@ -35,15 +35,18 @@
       "when": { "totalMBOver": 2.0 },
       "title": "Cut overall page weight",
       "why": "The page exceeds a healthy weight budget. Reducing total transfer is the most direct lever on carbon.",
-      "impact": "high"
+      "impact": "high",
+      "detail": "heaviestResources",
+      "heaviestLimit": 3
     },
     {
       "id": "psi-opportunities",
       "when": { "opportunitiesPresent": true },
-      "title": "Apply top PageSpeed opportunities",
-      "why": "Lighthouse lists specific, prioritised fixes. Address the highest-savings items first.",
+      "why": "Lighthouse lists this as a prioritised fix. Address the highest-savings items first.",
       "impact": "varies",
-      "source": "psi"
+      "source": "psi",
+      "limit": 3,
+      "savingsImpactMs": { "high": 1000, "medium": 300 }
     }
   ]
 }

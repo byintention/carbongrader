@@ -9,6 +9,14 @@ See `.cursor/rules/200-changelog.mdc` for the workflow.
 ## [Unreleased]
 
 ### Added
+- 2026-10-14 — Recommendation mapping (P4.1): deterministic tips from hosting,
+  page weight, and the top PageSpeed opportunities, shown on the results
+  dashboard and sorted by impact. A failed Greencheck no longer suggests
+  switching hosts. 9 offline tests; full suite is 91.
+- 2026-07-07 — Phase 3 UIKit frontend: URL form with mobile/desktop strategy,
+  async poll client with backoff, and a results dashboard (EcoGrade, carbon,
+  hosting, performance, page weight, resource breakdown). UIKit 3.21.6 via CDN;
+  custom `app.css` with dark mode and grade colours.
 - 2026-07-07 — Phase 2 carbon model and scoring (JS): `carbon.js` wraps vendored
   CO2.js `perVisit()` and maps grams to SWD carbon bands; `score.js` computes
   the weighted composite EcoGrade (0–100 + letter) from the PHP result payload
@@ -54,6 +62,10 @@ See `.cursor/rules/200-changelog.mdc` for the workflow.
 - 2026-06-09 — Initial repository scaffold: `.cursor/rules/` workflow rules,
   `docs/` (planning, audits, changelog), `src/` starter web app, `.cursorignore`,
   and `package.json`.
+
+### Fixed
+- 2026-10-14 — Grade failures stay visible. The submit handler was clearing the
+  status panel immediately after rendering an error.
 
 ### Changed
 - 2026-06-10 — Pre-build gap review resolved 4 blockers and refined the design:

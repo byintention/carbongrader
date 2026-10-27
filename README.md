@@ -5,17 +5,16 @@ grades it from **A** (low impact) to **F** (very high impact).
 
 ## Quick start
 
-This project runs directly in the browser — there is no build step.
-
-- **Recommended:** open the folder in [Prepros](https://prepros.io/) and let it
-  serve/process `src/` with live reload (see `.cursor/rules/050-tooling.mdc`).
-- **Or** serve the static files:
-
 ```bash
-npm start   # runs `npx serve src`
+npm start   # php -S localhost:8000 -t src
 ```
 
-Then open the printed URL and load the app.
+Open `http://localhost:8000/`, enter a URL, and grade it. Copy `.env.example` to
+`.env` and set `PAGESPEED_API_KEY` for live PageSpeed results.
+
+```bash
+npm test    # 82 offline tests (PHP + JS)
+```
 
 ## Project structure
 
