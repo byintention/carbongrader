@@ -9,11 +9,31 @@ See `.cursor/rules/200-changelog.mdc` for the workflow.
 ## [Unreleased]
 
 ### Changed
+- 2026-11-03 — Intention links carry only a source: `carbongradercta` on the contact button and `carbongraderfooter` on the footer credit.
+- 2026-11-03 — The contact panel uses UIKit card-body padding.
+- 2026-11-03 — Clear history uses the UIKit danger button.
+- 2026-11-03 — Headings no longer use `uk-card-title`. "Analyze a URL" and "Results" use the normal heading size.
+- 2026-11-03 — Recent grades uses the same divider line as the other section headings. Heading tags no longer use `uk-h4`.
+- 2026-11-03 — The share link has a "Share this result" heading above the form.
+- 2026-11-03 — The results panel opens with a centered Results heading. The analyzed URL sits under that heading.
+- 2026-11-03 — Recent grades sit below the results, with a spacer between the two panels.
+- 2026-11-03 — The share copy button uses the UIKit primary button.
+- 2026-11-03 — Clear history uses the UIKit secondary button.
+- 2026-11-03 — Validation errors show a cross icon, centered on the left of the message.
+- 2026-11-03 — The green-hosting card wraps the host name and "Checks this host only." in `.cg-host-detail`.
+- 2026-11-03 — The URL field and Grade button sit on one row. Errors and the working status render inside that form card.
+- 2026-11-03 — Resource breakdown file counts sit in their own span (`.cg-resource-count`) so they can be styled apart from the byte size.
+- 2026-11-03 — Score breakdown uses the same progress bars as the resource breakdown, with sentence-case component names.
+- 2026-11-03 — Site title and strapline sit on the left of the header. The theme toggle stays on the right on wider screens.
 - 2026-10-27 — UIKit 3.21.6 stylesheet is served from
   `src/assets/css/vendor/uikit.min.css` instead of jsDelivr. `style-src` is
   `'self'` only.
 
 ### Added
+- 2026-11-03 — When a grade has recommendations, "What to improve" ends with a contact panel: why page speed matters, and a link to Intention.
+- 2026-11-03 — Manual live deploy workflow (`.github/workflows/deploy-live.yml`).
+  Running it from the Actions tab uploads the repo to `/grader.byintention.co/`
+  over FTPS. `.env` stays on the server.
 - 2026-10-27 — Dark mode toggle in the header. The page follows the system
   color scheme until a light or dark choice is saved in this browser.
   Secondary text, links, alerts, and the B grade badge stay readable in both themes.

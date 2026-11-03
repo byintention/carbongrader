@@ -46,6 +46,22 @@ the carbon model, **UIKit 3** frontend. **No build system** (Prepros only).
 - [x] **P5.9** done (2026-10-27) — UIKit 3.21.6 CSS vendored locally; jsDelivr removed from `style-src`.
 - [~] **P5.1** — Accessibility, dark mode polish, reduced motion, equal-height metric cards.
   - [x] Dark mode control (2026-10-27) — header toggle. Follows the system scheme until this browser saves light or dark.
+  - [x] Header title and strapline left-aligned (2026-11-03). Theme toggle stays on the right from 720px up.
+  - [x] Score breakdown uses the resource meters and sentence-case labels (2026-11-03).
+  - [x] Resource file count is its own span (2026-11-03) so it can be styled apart from the byte size.
+  - [x] URL field and Grade button share a row; errors and loading sit in the form card (2026-11-03).
+  - [x] Host name and "Checks this host only." share a `.cg-host-detail` wrapper (2026-11-03).
+  - [x] Danger alert shows a cross icon, vertically centered on the left (2026-11-03).
+  - [x] Clear history uses the UIKit secondary button (2026-11-03).
+  - [x] Share copy button uses the UIKit primary button (2026-11-03).
+  - [x] Recent grades sit below the results, with a spacer when both are showing (2026-11-03).
+  - [x] Results heading sits at the top of the results panel, centered, with the analyzed URL under it (2026-11-03).
+  - [x] Share block has an h2 divider heading, "Share this result" (2026-11-03).
+  - [x] Recent grades heading uses the divider line, and no heading uses `uk-h4` (2026-11-03).
+  - [x] Headings no longer use `uk-card-title` (2026-11-03).
+  - [x] Clear history uses the UIKit danger button (2026-11-03).
+  - [x] "What to improve" shows a contact panel when recommendations are present (2026-11-03).
+  - [x] Intention links use only `utm_source`: `carbongradercta` on the contact button, `carbongraderfooter` on the footer (2026-11-03).
 
 > Run the app: `npm start` → open `http://localhost:8020/`. Live grading needs
 > `PAGESPEED_API_KEY` in `.env`. Full suite: `npm test` (110 tests).

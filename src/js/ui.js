@@ -71,11 +71,30 @@ export function renderError(container, message, code = "") {
   container.replaceChildren();
   const alert = el("div", "uk-alert-danger", "");
   alert.setAttribute("role", "alert");
-  alert.appendChild(el("p", "uk-margin-remove", message));
+  const copy = el("div", "cg-alert-copy");
+  copy.appendChild(el("p", "uk-margin-remove", message));
   if (code) {
-    alert.appendChild(el("p", "uk-text-meta uk-margin-small-top", `Code: ${code}`));
+    copy.appendChild(el("p", "uk-text-meta uk-margin-small-top", `Code: ${code}`));
   }
+  alert.append(alertIcon(), copy);
   container.appendChild(alert);
+}
+
+/** Decorative cross for the danger alert. The message text carries the meaning. */
+function alertIcon() {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("class", "cg-alert-icon");
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("focusable", "false");
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("d", "M6 6l12 12M18 6L6 18");
+  path.setAttribute("fill", "none");
+  path.setAttribute("stroke", "currentColor");
+  path.setAttribute("stroke-width", "2.5");
+  path.setAttribute("stroke-linecap", "round");
+  svg.appendChild(path);
+  return svg;
 }
 
 /**
@@ -101,6 +120,15 @@ export function renderResults(container, result, eco, tips = [], actions = {}) {
   container.hidden = false;
 
   const grid = el("div", "cg-results");
+
+  const header = el("div", "cg-results-head");
+  const title = el("h2", "uk-margin-remove", "Results");
+  title.id = "results-heading";
+  const analyzed = el("p", "uk-text-meta uk-margin-remove");
+  const cached = result.cached ? " · cached result" : "";
+  analyzed.textContent = `Analyzed ${result.url} (${result.strategy})${cached}`;
+  header.append(title, analyzed);
+  grid.appendChild(header);
 
   // — Headline grade —
   const headline = el("div", "uk-width-1-1");
@@ -141,9 +169,11 @@ export function renderResults(container, result, eco, tips = [], actions = {}) {
       meter.className = "cg-meter";
       meter.max = 100;
       meter.value = pct;
-      const metaText = `${formatBytes(item.bytes)} · ${item.count} file${item.count === 1 ? "" : "s"}`;
+      const fileLabel = `${item.count} file${item.count === 1 ? "" : "s"}`;
+      const metaText = `${formatBytes(item.bytes)} · ${fileLabel}`;
       meter.setAttribute("aria-label", `${labelType(item.type)}: ${metaText}`);
-      const meta = el("span", "cg-resource-meta", metaText);
+      const meta = el("span", "cg-resource-meta");
+      meta.append(formatBytes(item.bytes), el("span", "cg-resource-count", fileLabel));
       li.append(label, meter, meta);
       list.appendChild(li);
     }
@@ -154,11 +184,21 @@ export function renderResults(container, result, eco, tips = [], actions = {}) {
   // — Component scores —
   const compSection = el("div", "cg-results-block");
   compSection.appendChild(el("h3", "uk-heading-divider", "Score breakdown"));
-  const compList = el("dl", "uk-description-list");
+  const compList = el("ul", "uk-list uk-list-divider");
   for (const [key, value] of Object.entries(eco.components)) {
-    const dt = el("dt", "", labelForComponent(key));
-    const dd = el("dd", "", `${value}/100`);
-    compList.append(dt, dd);
+    const li = el("li", "cg-resource-row cg-score-row");
+    const name = labelForComponent(key);
+    const label = el("span", "cg-resource-label", name);
+    const score = Math.max(0, Math.min(100, Math.round(Number(value) || 0)));
+    const meter = document.createElement("progress");
+    meter.className = "cg-meter";
+    meter.max = 100;
+    meter.value = score;
+    const metaText = `${score}/100`;
+    meter.setAttribute("aria-label", `${name}: ${metaText}`);
+    const meta = el("span", "cg-resource-meta", metaText);
+    li.append(label, meter, meta);
+    compList.appendChild(li);
   }
   compSection.appendChild(compList);
   grid.appendChild(compSection);
@@ -168,12 +208,6 @@ export function renderResults(container, result, eco, tips = [], actions = {}) {
   if (actions.shareHref) {
     grid.appendChild(shareBlock(actions.shareHref));
   }
-
-  // — Meta —
-  const meta = el("div", "cg-results-block uk-text-meta");
-  const cached = result.cached ? " · cached result" : "";
-  meta.textContent = `Analyzed ${result.url} (${result.strategy})${cached}`;
-  grid.appendChild(meta);
 
   container.appendChild(grid);
 }
@@ -206,10 +240,12 @@ function hostingCard(hosting) {
   }
   const label = el("span", labelClass, labelText);
   inner.appendChild(label);
+  const detail = el("div", "cg-host-detail");
   if (hosting?.hostedBy) {
-    inner.appendChild(el("div", "uk-text-small uk-text-muted uk-margin-small-top", hosting.hostedBy));
+    detail.appendChild(el("div", "uk-text-small uk-text-muted uk-margin-small-top", hosting.hostedBy));
   }
-  inner.appendChild(el("div", "cg-metric-sub uk-text-small uk-text-muted", "Checks this host only."));
+  detail.appendChild(el("div", "cg-metric-sub uk-text-small uk-text-muted", "Checks this host only."));
+  inner.appendChild(detail);
   card.appendChild(inner);
   return card;
 }
@@ -229,7 +265,7 @@ export function renderHistory(container, entries, onOpen, onClear) {
     return;
   }
   container.hidden = false;
-  const heading = el("h2", "uk-h4 uk-margin-small-bottom", "Recent grades");
+  const heading = el("h2", "uk-heading-divider", "Recent grades");
   heading.id = "history-heading";
   container.appendChild(heading);
   const list = el("ul", "uk-list uk-list-divider");
@@ -251,7 +287,7 @@ export function renderHistory(container, entries, onOpen, onClear) {
     list.appendChild(li);
   }
   container.appendChild(list);
-  const clear = el("button", "uk-button uk-button-text uk-margin-small-top", "Clear history");
+  const clear = el("button", "uk-button uk-button-danger uk-margin-small-top", "Clear history");
   clear.type = "button";
   clear.addEventListener("click", onClear);
   container.appendChild(clear);
@@ -260,6 +296,7 @@ export function renderHistory(container, entries, onOpen, onClear) {
 /** @param {string} href */
 function shareBlock(href) {
   const wrap = el("div", "cg-results-block cg-share");
+  wrap.appendChild(el("h2", "uk-heading-divider", "Share this result"));
   const label = el("label", "uk-form-label", "Share link");
   label.htmlFor = "share-link";
   const row = el("div", "cg-share-row");
@@ -268,7 +305,7 @@ function shareBlock(href) {
   input.id = "share-link";
   input.readOnly = true;
   input.value = href;
-  const btn = el("button", "uk-button uk-button-default", "Copy");
+  const btn = el("button", "uk-button uk-button-primary", "Copy");
   btn.type = "button";
   btn.addEventListener("click", async () => {
     try {
@@ -328,7 +365,24 @@ function recommendationsSection(tips) {
     list.appendChild(li);
   }
   section.appendChild(list);
+  section.appendChild(helpCta());
   return section;
+}
+
+function helpCta() {
+  const panel = el("aside", "cg-help-cta uk-card-body");
+  panel.appendChild(el("h2", "", "Need help fixing this?"));
+  panel.appendChild(
+    el(
+      "p",
+      "",
+      "Page speed is part of this grade. A slow page sends more data, uses more energy, and people often leave before it finishes loading. We can help you fix it!",
+    ),
+  );
+  const link = el("a", "uk-button cg-help-cta-btn", "Get in touch");
+  link.href = "https://byintention.co/contact?utm_source=carbongradercta";
+  panel.appendChild(link);
+  return panel;
 }
 
 /** @param {"high"|"medium"|"low"} impact */

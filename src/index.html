@@ -16,7 +16,7 @@
     <div class="uk-container uk-container-small cg-header">
       <div class="cg-header-copy uk-text-left">
         <h1 class="uk-heading-medium uk-margin-remove">Carbon<span class="cg-brand">Grader</span></h1>
-        <p class="uk-text-meta uk-margin-remove-top">Grade a web page's carbon footprint, hosting, and performance.</p>
+        <p class="uk-text-meta uk-margin-remove">Grade a web page's carbon footprint, hosting, and performance.</p>
       </div>
       <button type="button" class="cg-theme-toggle" id="theme-toggle" aria-pressed="false">
         Dark mode
@@ -27,20 +27,25 @@
   <main id="main" class="uk-section uk-section-small">
     <div class="uk-container uk-container-small">
       <section class="uk-card uk-card-default uk-card-body" aria-labelledby="form-heading">
-        <h2 id="form-heading" class="uk-card-title">Analyze a URL</h2>
+        <h2 id="form-heading">Analyze a URL</h2>
         <form id="grade-form" novalidate>
           <div class="uk-margin">
             <label class="uk-form-label" for="url-input">Website URL</label>
-            <input
-              class="uk-input"
-              type="url"
-              id="url-input"
-              name="url"
-              placeholder="https://example.com"
-              autocomplete="url"
-              inputmode="url"
-              required
-            />
+            <div class="cg-url-row">
+              <input
+                class="uk-input"
+                type="url"
+                id="url-input"
+                name="url"
+                placeholder="https://example.com"
+                autocomplete="url"
+                inputmode="url"
+                required
+              />
+              <button type="submit" class="uk-button uk-button-primary" id="submit-btn">
+                Grade it
+              </button>
+            </div>
           </div>
 
           <fieldset class="uk-fieldset uk-margin">
@@ -51,33 +56,28 @@
             </div>
           </fieldset>
 
-          <button type="submit" class="uk-button uk-button-primary uk-width-1-1" id="submit-btn">
-            Grade it
-          </button>
-          <p class="uk-text-meta uk-margin-small-top uk-margin-remove-bottom">
-            The URL is sent to Google PageSpeed Insights and the Green Web Foundation.
-            This server keeps a short-lived copy so the same page is not looked up twice.
-          </p>
+
         </form>
+        <div id="status-panel" hidden aria-live="polite"></div>
       </section>
-
-      <section id="history-panel" class="uk-margin-top" hidden aria-labelledby="history-heading"></section>
-
-      <div id="status-panel" class="uk-margin-top" hidden aria-live="polite"></div>
 
       <section
         id="results-panel"
         class="uk-margin-top"
         hidden
         tabindex="-1"
-        aria-label="Results"
+        aria-labelledby="results-heading"
       ></section>
+
+      <div class="cg-panel-spacer" aria-hidden="true"></div>
+
+      <section id="history-panel" class="uk-margin-top" hidden aria-labelledby="history-heading"></section>
     </div>
   </main>
 
-  <footer class="uk-section uk-section-small uk-text-center">
+  <footer class="uk-section uk-section-small uk-text-center uk-section-muted">
   <div class="uk-container cg-privacy">
-    <p>Built by <a href="https://byintention.co">Intention</a></p>
+    <p>Built by <a href="https://byintention.co/?utm_source=carbongraderfooter">Intention</a></p>
     <p>
       Powered by
       <a href="https://www.thegreenwebfoundation.org/co2js/" rel="noopener noreferrer">CO2.js</a>
@@ -90,7 +90,10 @@
       (MIT).
     </p>
     <p class="uk-margin-remove">
-      Recent grades and the color theme stay in this browser. CarbonGrader is an independent project and is not affiliated with Ecograder.
+      The URL is sent to Google PageSpeed Insights and the Green Web Foundation.<br>
+      This server keeps a short-lived copy so the same page is not looked up twice.<br>
+      Recent grades and the color theme stay in this browser.<br>
+      CarbonGrader is an independent project and is not affiliated with Ecograder.
     </p>
   </div>
   </footer>
