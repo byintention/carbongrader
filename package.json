@@ -7,9 +7,9 @@
   "scripts": {
     "start": "php -S localhost:8020 -t src src/router.php",
     "serve": "php -S localhost:8020 -t src src/router.php",
-    "test:php": "php tests/UrlValidatorTest.php && php tests/GreencheckClientTest.php && php tests/PageSpeedClientTest.php && php tests/CacheTest.php && php tests/JobStoreTest.php && php tests/RateLimiterTest.php && php tests/GradeServiceTest.php",
+    "test:php": "php tests/UrlValidatorTest.php && php tests/GreencheckClientTest.php && php tests/PageSpeedClientTest.php && php tests/CacheTest.php && php tests/JobStoreTest.php && php tests/ResultStoreTest.php && php tests/RateLimiterTest.php && php tests/GradeServiceTest.php",
     "test:phpunit": "php vendor/bin/phpunit",
-    "test:js": "node tests/CarbonTest.mjs && node tests/ScoreTest.mjs && node tests/RecommendationsTest.mjs && node tests/HistoryTest.mjs",
+    "test:js": "node tests/CarbonTest.mjs && node tests/ScoreTest.mjs && node tests/RecommendationsTest.mjs && node tests/HistoryTest.mjs && node tests/ThemeTest.mjs",
     "test:browser": "php -S localhost:8099 -t . tests/dev-router.php",
     "test": "npm run test:php && npm run test:phpunit && npm run test:js"
   },

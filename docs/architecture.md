@@ -23,7 +23,7 @@ User submits a public URL. The app analyses the page and returns:
 |-------|--------|-------|
 | Backend API | **PHP 8.1+** | Async job orchestration, secret handling, caching, SSRF guard. Dev server: `php -S`. |
 | Carbon model | **CO2.js** (`@tgwf/co2`) in **JS** | SWD model via **`perVisit()`** (matches the per-visit bands). **Vendored + version-pinned** ES module in `src/js/vendor/` (no CDN at runtime, no bundler). |
-| Frontend | **UIKit 3** | Loaded via CDN (CSS + JS + icons). Custom CSS overrides only. |
+| Frontend | **UIKit 3** | Stylesheet vendored and version-pinned at `src/assets/css/vendor/uikit.min.css` (no CDN at runtime). Custom CSS overrides only. The app does not load UIKit JS. |
 | Data — perf/weight | **PageSpeed Insights API v5** | Server-side (API key is secret). |
 | Data — hosting | **Green Web Foundation Greencheck API v3** | Server-side, no key required. |
 | Dev tooling | Prepros (optional Sass), Composer for PHP dev deps | No bundlers/transpilers for shipped JS. |
@@ -133,6 +133,13 @@ const grams = swd.perVisit(totalBytes, isGreen); // g CO2e per visit → matches
 - On success: `{ "ok": true, "id": "abc123", "status": "done", "result": { … } }`
 - On failure: `{ "ok": true, "id": "abc123", "status": "error", "error": { … } }`
 
+### 5.2.1 Read a saved result
+`GET /api/grade.php?result=<id>`
+- Found: `{ "ok": true, "id": "<id>", "result": { … } }` — the same public payload as §5.3.
+- Missing or malformed id: `NOT_FOUND`. There is no list endpoint.
+
+A finished job (including a cache hit) writes `var/results/<id>.json`, where `<id>` is the job id. The page opens that snapshot with `/?r=<id>` and does not call PageSpeed again. `/?url=&strategy=` still starts a new grade. Files are not pruned on the request path.
+
 ### 5.3 `result` payload
 ```jsonc
 {
@@ -167,18 +174,19 @@ All thresholds/weights live in `config/scoring.json` so they can be tuned
 without code changes.
 
 ### 6.1 Carbon rating bands (per page view, g CO₂e)
-Use Sustainable Web Design rating bands (A+–F). **Verify against the current
-SWD methodology before shipping** — seed values to confirm:
+Sustainable Web Design **v4** percentiles from vendored CO2.js 0.18
+(`ratingScale`, `grams <= cutoff`). The v3 table (A+ ≤ 0.095 … E ≤ 0.846)
+graded this model's output too high.
 
 | Grade | ≤ g CO₂e/view |
 |-------|----------------|
-| A+ | 0.095 |
-| A  | 0.186 |
-| B  | 0.341 |
-| C  | 0.493 |
-| D  | 0.656 |
-| E  | 0.846 |
-| F  | > 0.846 |
+| A+ | 0.040 |
+| A  | 0.079 |
+| B  | 0.145 |
+| C  | 0.209 |
+| D  | 0.278 |
+| E  | 0.359 |
+| F  | > 0.359 |
 
 ### 6.2 Composite EcoGrade (0–100) — provisional, tunable in `scoring.json`
 
@@ -221,7 +229,11 @@ Each tip: title, why it matters, est. impact. Source mapping in `config/recommen
 src/
 ├── index.html                # UIKit shell + form + results container
 ├── assets/
-│   └── css/app.css           # overrides on top of UIKit (Prepros-friendly)
+│   └── css/
+│       ├── app.css           # overrides on top of UIKit (Prepros-friendly)
+│       └── vendor/
+│           ├── uikit.min.css # pinned UIKit 3 stylesheet (committed, not from CDN)
+│           └── VERSION       # exact uikit version vendored
 ├── js/
 │   ├── main.js               # form handling, create+poll job, orchestrate states
 │   ├── api.js                # client for the PHP endpoint (POST + poll w/ backoff)
@@ -240,6 +252,7 @@ src/
         ├── PageSpeedClient.php
         ├── GreencheckClient.php
         ├── JobStore.php       # job lifecycle + per-URL lock (single-flight)
+        ├── ResultStore.php    # durable snapshot, one JSON file per job id
         ├── Cache.php          # file or APCu cache, TTL per source
         ├── RateLimiter.php
         └── Json.php           # safe JSON response + escaping
@@ -248,7 +261,7 @@ src/
 config/
 ├── scoring.json              # band points + weights + budgets + letter cutoffs
 └── recommendations.json      # result → tip mapping
-var/                          # writable, non-public: cache/, jobs/, ratelimit/
+var/                          # writable, non-public: cache/, jobs/, results/, ratelimit/
 .env                          # PAGESPEED_API_KEY, TTLs (gitignored; .env.example committed)
 ```
 
@@ -277,6 +290,9 @@ var/                          # writable, non-public: cache/, jobs/, ratelimit/
   uncached URL trigger only one PSI call (cache-stampede protection).
 - **Job store** (`var/jobs/`): tracks `queued|running|done|error`, timestamps,
   and result; reaped after a short retention window.
+- **Saved results** (`var/results/<id>.json`): one file per finished grade, keyed
+  by the job id. Flat directory (no month folders). The share link is `/?r=<id>`.
+  A later sweep can delete files by mtime; the request path does not.
 - Quota guardrails: PSI (with key) ~25k/day and ~240/min — set per-IP rate
   limits and TTLs comfortably under these (confirm in open questions).
 
@@ -286,8 +302,8 @@ var/                          # writable, non-public: cache/, jobs/, ratelimit/
 - **Secret hygiene:** PSI key server-side only; never in client JS or responses.
 - **Input validation:** strict URL parsing; reject malformed/oversized input.
 - **Output:** escape all dynamic content inserted into the DOM (`textContent`, no `innerHTML` with untrusted data).
-- **CSP:** strict. UIKit may load from its CDN (or vendor it too); CO2.js is
-  vendored, so `script-src` needs **no** `esm.sh`/jsdelivr. No `unsafe-inline`/`eval`.
+- **CSP:** strict. UIKit CSS and CO2.js are vendored, so `style-src` and
+  `script-src` are `'self'` only. No `esm.sh`/jsdelivr. No `unsafe-inline`/`eval`.
 - **Docroot isolation:** docroot is `src/`; deny web access to `config/`, `var/`,
   `.env`, `docs/`, `tests/`, and `api/lib/` via server rules (`.htaccess`/nginx).
 - **Rate limiting:** per-IP on job creation to protect quota (storage in `var/`).
@@ -320,4 +336,4 @@ var/                          # writable, non-public: cache/, jobs/, ratelimit/
 
 - Dev server (PHP needed): `php -S localhost:8020 -t src src/router.php` → open `http://localhost:8020/`. Local serving always uses port **8020**.
 - Prepros optionally watches `src/assets/css` (Sass) and reloads.
-- No bundler; UIKit + CO2.js load via CDN/ESM.
+- No bundler; UIKit CSS and CO2.js are vendored static files.

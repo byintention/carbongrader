@@ -41,10 +41,14 @@ the carbon model, **UIKit 3** frontend. **No build system** (Prepros only).
   dashboard (`index.html`, `api.js`, `main.js`, `ui.js`, `app.css`).
 - [x] **Phase 4 complete** (2026-10-14) — recommendation mapping on the results
   dashboard. Full suite **91**.
+- [x] **P5.7** done (2026-10-27) — saved result links: one JSON file per finished grade, opened with `?r=<id>`.
+- [x] **P5.8** done (2026-10-27) — carbon bands aligned to CO2.js SWD v4. The v3 table was grading v4 grams, so ordinary pages scored A/A+.
+- [x] **P5.9** done (2026-10-27) — UIKit 3.21.6 CSS vendored locally; jsDelivr removed from `style-src`.
 - [~] **P5.1** — Accessibility, dark mode polish, reduced motion, equal-height metric cards.
+  - [x] Dark mode control (2026-10-27) — header toggle. Follows the system scheme until this browser saves light or dark.
 
 > Run the app: `npm start` → open `http://localhost:8020/`. Live grading needs
-> `PAGESPEED_API_KEY` in `.env`. Full suite: `npm test` (91 tests).
+> `PAGESPEED_API_KEY` in `.env`. Full suite: `npm test` (110 tests).
 
 > Decisions locked (2026-06-09): browser-side CO2.js · single-URL scope for v1.
 > Decisions locked (2026-06-10): carbon via CO2.js `**perVisit`** · **async
@@ -185,6 +189,32 @@ limits, deny non-public dirs) → log in `docs/audits.md`.
 Google PSI, Green Web Foundation, CO2.js, UIKit; PSI/GWF ToS check; privacy
 note). Files: `src/index.html`, `docs/audits.md`.
 - **P5.6 Changelog + version bump** per `200-changelog.mdc`.
+- [x] **P5.7 Saved result links** (2026-10-27)
+  - Done: a finished grade, including a cache hit, is stored as
+    `var/results/<id>.json` using the job id. `GET /api/grade.php?result=<id>`
+    returns that public payload, or `NOT_FOUND` for a missing or malformed id.
+    `/?r=<id>` renders the snapshot with no new PageSpeed call. The share
+    field uses that link and does not call it permanent. `/?url=&strategy=`
+    still starts a new grade. No SQLite, no month folders, no pruning on the
+    request path.
+  - Files: `src/api/lib/ResultStore.php`, `src/api/lib/GradeService.php`,
+    `src/api/grade.php`, `src/api/config.php`, `src/js/api.js`,
+    `src/js/history.js`, `src/js/main.js`, `src/js/ui.js`,
+    `tests/ResultStoreTest.php`, `tests/GradeServiceTest.php`,
+    `tests/HistoryTest.mjs`.
+- [x] **P5.8 Carbon bands on the SWD v4 scale** (2026-10-27)
+  - Done: `carbonBands` in `config/scoring.json` and `src/js/scoring-config.js`
+    now use the CO2.js 0.18 v4 percentiles (A+ ≤ 0.04 g … E ≤ 0.359 g). The
+    v3 table was scoring v4 `perVisit` grams, so typical pages landed on A/A+.
+  - Files: `config/scoring.json`, `src/js/scoring-config.js`,
+    `tests/CarbonTest.mjs`, `tests/ScoreTest.mjs`, `docs/architecture.md`.
+- [x] **P5.9 Vendor UIKit CSS** (2026-10-27)
+  - Done: UIKit 3.21.6 `uikit.min.css` (271 KB, data-URI images only) lives at
+    `src/assets/css/vendor/uikit.min.css`, pinned in `VERSION`. The page links
+    that file. `style-src` is `'self'` in the meta tag, `router.php`, and
+    `.htaccess`.
+  - Files: `src/index.html`, `src/assets/css/vendor/`, `src/router.php`,
+    `src/.htaccess`, `docs/architecture.md`.
 
 ---
 
@@ -200,8 +230,19 @@ job runs inline on first poll with a per-URL single-flight lock.
 - **2026-06-10** — CO2.js is **vendored + version-pinned** in `src/js/vendor/`
 (no runtime CDN), for reproducible grades.
 - **2026-10-27** — Local app server is always **port 8020** (`npm start`).
+- **2026-10-27** — Saved grades are one JSON file per id in `var/results/`,
+  not SQLite. The share link is `/?r=<id>`. No month folders and no pruning
+  on the request path.
 - **2026-06-10** — Scoring scheme (architecture §6.2) adopted as **provisional**
 seed values (headline = composite 0–100; carbon band as sub-metric); tunable.
+- **2026-10-27** — Carbon bands are the CO2.js 0.18 SWD **v4** percentiles
+  (A+ ≤ 0.04 g … E ≤ 0.359 g). The v3 table was left in place by mistake and
+  scored v4 `perVisit` output too high. Weights and letter cutoffs stay provisional.
+- **2026-10-27** — UIKit CSS is **vendored + version-pinned** at
+  `src/assets/css/vendor/uikit.min.css` (no runtime CDN). UIKit JS is not loaded.
+- **2026-10-27** — Color theme follows `prefers-color-scheme` until the header
+  toggle saves `light` or `dark` in `localStorage` (`cg-theme`). No account
+  and no server-side preference.
 
 ## Open questions (still to resolve)
 
@@ -209,11 +250,11 @@ seed values (headline = composite 0–100; carbon band as sub-metric); tunable.
 serve PHP. (P5.4)
 - **PSI quota/rate limits** — confirm key tier (~25k/day, ~240/min) → final
 cache TTLs + per-IP limits. (P1.4)
-- **Scoring tuning** — finalize weights, band points, efficiency budget, and
-letter cutoffs before launch (desktop may need a separate budget). (P2.2)
+- **Scoring tuning** — carbon bands now match SWD v4. Weights, band points,
+efficiency budget, and letter cutoffs are still provisional (desktop may need
+a separate budget). (P2.2)
 - **Query-string canonicalization policy** — keep vs. strip for cache key. (P1.1)
 - `**.env` loading** — real env vars vs. minimal PHP parser vs. a dotenv dep. (P0.3)
-- **UIKit** — load from CDN or vendor it too (CSP/offline). (P3.1)
 - **Privacy** — IP hashing + URL/log retention policy. (P5.5)
 
 ## Backlog / ideas
@@ -222,5 +263,4 @@ letter cutoffs before launch (desktop may need a separate budget). (P2.2)
 - Historical tracking / trend per URL.
 - Carbon budget badges to embed.
 - Per-country grid intensity via `perVisitTrace` options.
-- Save results to flat file or database and allow sharing with querystring/id
 

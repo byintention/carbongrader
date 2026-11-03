@@ -162,6 +162,7 @@ function cg_make_grade_service(array $config): GradeService
         new Cache($varDir . '/cache'),
         new JobStore($varDir),
         new RateLimiter($varDir . '/ratelimit', (int) $config['rateLimitPerMinute']),
+        new ResultStore($varDir . '/results'),
         cg_make_analyzer($config),
         (int) $config['cacheTtlPsi'],
         (string) $config['strategyDefault'],

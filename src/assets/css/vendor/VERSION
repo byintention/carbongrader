@@ -1,0 +1,8 @@
+uikit 3.21.6
+source: https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/css/uikit.min.css
+vendored: 2026-10-27
+notes: Minified UIKit stylesheet only. The app does not load UIKit JS.
+       Self-contained (background images are data URIs; no extra font or image files).
+       Linked from index.html as assets/css/vendor/uikit.min.css.
+       To update: re-download a pinned uikit@<version>/dist/css/uikit.min.css
+       and update this file (no npm install, no build step).

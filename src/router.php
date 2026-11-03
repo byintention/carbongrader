@@ -74,7 +74,7 @@ function cg_security_headers(): void
     header(
         "Content-Security-Policy: default-src 'self'; "
         . "script-src 'self'; "
-        . "style-src 'self' https://cdn.jsdelivr.net; "
+        . "style-src 'self'; "
         . "img-src 'self' data:; "
         . "connect-src 'self'; "
         . "font-src 'self'; "

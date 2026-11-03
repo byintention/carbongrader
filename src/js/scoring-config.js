@@ -1,6 +1,6 @@
 /**
  * Browser-side scoring config. Keep in sync with `config/scoring.json`.
- * See docs/architecture.md §6.
+ * Carbon bands match CO2.js 0.18 SWD v4 (`ratingScale`). See docs/architecture.md §6.
  */
 export default {
   version: 1,
@@ -13,12 +13,12 @@ export default {
     efficiency: 0.1,
   },
   carbonBands: [
-    { grade: "A+", maxGramsPerVisit: 0.095, points: 100 },
-    { grade: "A", maxGramsPerVisit: 0.186, points: 92 },
-    { grade: "B", maxGramsPerVisit: 0.341, points: 80 },
-    { grade: "C", maxGramsPerVisit: 0.493, points: 68 },
-    { grade: "D", maxGramsPerVisit: 0.656, points: 55 },
-    { grade: "E", maxGramsPerVisit: 0.846, points: 42 },
+    { grade: "A+", maxGramsPerVisit: 0.04, points: 100 },
+    { grade: "A", maxGramsPerVisit: 0.079, points: 92 },
+    { grade: "B", maxGramsPerVisit: 0.145, points: 80 },
+    { grade: "C", maxGramsPerVisit: 0.209, points: 68 },
+    { grade: "D", maxGramsPerVisit: 0.278, points: 55 },
+    { grade: "E", maxGramsPerVisit: 0.359, points: 42 },
     { grade: "F", maxGramsPerVisit: null, points: 25 },
   ],
   hostingPoints: { green: 100, grey: 0 },

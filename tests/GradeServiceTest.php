@@ -87,6 +87,7 @@ function makeService(
         new Cache($dir . '/cache'),
         new JobStore($dir),
         new RateLimiter($dir . '/ratelimit', $maxPerMinute),
+        new ResultStore($dir . '/results'),
         $analyzer,
         $ttl,
         'mobile',
@@ -220,6 +221,7 @@ check('poll returns running when single-flight lock is held', function () use ($
         new Cache($dir . '/cache'),
         $jobs,
         new RateLimiter($dir . '/ratelimit', 100),
+        new ResultStore($dir . '/results'),
         countingAnalyzer($calls),
         3600,
         'mobile',
@@ -232,6 +234,125 @@ check('poll returns running when single-flight lock is held', function () use ($
     assertSame('running', $poll['status']);
     assertSame(0, $calls, 'analyzer not run while lock held');
     $jobs->releaseLock($held);
+    rrmdir($dir);
+});
+
+check('fresh analysis is saved and a failed job is not', function () use ($publicResolver) {
+    $dir = tmpDir();
+    $calls = 0;
+    $results = new ResultStore($dir . '/results');
+    $svc = new GradeService(
+        new Cache($dir . '/cache'),
+        new JobStore($dir),
+        new RateLimiter($dir . '/ratelimit', 100),
+        $results,
+        countingAnalyzer($calls),
+        3600,
+        'mobile',
+        $publicResolver,
+    );
+    $create = $svc->createJob(['url' => 'https://example.com/'], '203.0.113.1');
+    $poll = $svc->poll($create['id']);
+    $saved = $results->get($create['id']);
+    assertTrue($saved !== null);
+    assertSame('https://example.com/', $saved['url']);
+    assertSame(false, $saved['cached']);
+    assertSame(1000000, $saved['page']['totalBytes']);
+    assertSame($saved, $poll['result']);
+    $loaded = $svc->savedResult($create['id']);
+    assertSame(true, $loaded['ok']);
+    assertSame($saved, $loaded['result']);
+
+    $failing = new GradeService(
+        new Cache($dir . '/cache'),
+        new JobStore($dir),
+        new RateLimiter($dir . '/ratelimit', 100),
+        $results,
+        static function (): array {
+            throw new UpstreamException('UPSTREAM', 'secret project_number=123');
+        },
+        3600,
+        'mobile',
+        $publicResolver,
+    );
+    $bad = $failing->createJob(['url' => 'https://other.example/', 'strategy' => 'desktop'], '203.0.113.9');
+    $failing->poll($bad['id']);
+    assertSame(null, $results->get($bad['id']));
+    rrmdir($dir);
+});
+
+check('cache hit on create saves a second snapshot', function () use ($publicResolver) {
+    $dir = tmpDir();
+    $calls = 0;
+    $results = new ResultStore($dir . '/results');
+    $svc = new GradeService(
+        new Cache($dir . '/cache'),
+        new JobStore($dir),
+        new RateLimiter($dir . '/ratelimit', 100),
+        $results,
+        countingAnalyzer($calls),
+        3600,
+        'mobile',
+        $publicResolver,
+    );
+    $first = $svc->createJob(['url' => 'https://example.com/'], '203.0.113.1');
+    $svc->poll($first['id']);
+    $second = $svc->createJob(['url' => 'https://example.com/'], '203.0.113.1');
+    assertSame('done', $second['status']);
+    $saved = $results->get($second['id']);
+    assertTrue($saved !== null);
+    assertSame(true, $saved['cached']);
+    assertSame('https://example.com/', $saved['url']);
+    rrmdir($dir);
+});
+
+check('poll uses a result that landed in cache and strips extra fields', function () use ($publicResolver) {
+    $dir = tmpDir();
+    $calls = 0;
+    $cache = new Cache($dir . '/cache');
+    $jobs = new JobStore($dir);
+    $results = new ResultStore($dir . '/results');
+    $svc = new GradeService(
+        $cache,
+        $jobs,
+        new RateLimiter($dir . '/ratelimit', 100),
+        $results,
+        countingAnalyzer($calls),
+        3600,
+        'mobile',
+        $publicResolver,
+    );
+    $create = $svc->createJob(['url' => 'https://example.com/'], '203.0.113.1');
+    $job = $jobs->get($create['id']);
+    $cache->set((string) $job['canonicalKey'], [
+        'url' => 'https://example.com/',
+        'host' => 'example.com',
+        'strategy' => 'mobile',
+        'fetchedAt' => '2026-10-27T00:00:00+00:00',
+        'hosting' => ['green' => true, 'hostedBy' => 'Test Host', 'verified' => true],
+        'page' => ['totalBytes' => 50, 'performanceScore' => 0.8, 'resources' => []],
+        'opportunities' => [],
+        'apiKey' => 'secret',
+    ], 3600);
+    $poll = $svc->poll($create['id']);
+    assertSame(0, $calls, 'analyzer not run when cache filled first');
+    assertSame(true, $poll['result']['cached']);
+    assertTrue(!array_key_exists('apiKey', $poll['result']));
+    $saved = $results->get($create['id']);
+    assertSame($poll['result'], $saved);
+    assertTrue(!array_key_exists('apiKey', $saved));
+    rrmdir($dir);
+});
+
+check('savedResult rejects unknown and malformed ids', function () {
+    $dir = tmpDir();
+    $calls = 0;
+    $svc = makeService($dir, countingAnalyzer($calls));
+    $missing = $svc->savedResult('abcdef12');
+    assertSame(false, $missing['ok']);
+    assertSame('NOT_FOUND', $missing['error']['code']);
+    $bad = $svc->savedResult('../etc/passwd');
+    assertSame('NOT_FOUND', $bad['error']['code']);
     rrmdir($dir);
 });
 

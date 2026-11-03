@@ -8,7 +8,19 @@ See `.cursor/rules/200-changelog.mdc` for the workflow.
 
 ## [Unreleased]
 
+### Changed
+- 2026-10-27 — UIKit 3.21.6 stylesheet is served from
+  `src/assets/css/vendor/uikit.min.css` instead of jsDelivr. `style-src` is
+  `'self'` only.
+
 ### Added
+- 2026-10-27 — Dark mode toggle in the header. The page follows the system
+  color scheme until a light or dark choice is saved in this browser.
+  Secondary text, links, alerts, and the B grade badge stay readable in both themes.
+- 2026-10-27 — Saved grade snapshots: each finished grade is stored as one JSON
+  file under `var/results/` and can be reopened with `?r=<id>` without calling
+  PageSpeed again. The share field uses that link. A URL-and-strategy query
+  still starts a new grade. Full suite is 110.
 - 2026-10-14 — Recommendation mapping (P4.1): deterministic tips from hosting,
   page weight, and the top PageSpeed opportunities, shown on the results
   dashboard and sorted by impact. A failed Greencheck no longer suggests
@@ -68,6 +80,9 @@ See `.cursor/rules/200-changelog.mdc` for the workflow.
   status panel immediately after rendering an error.
 
 ### Changed
+- 2026-10-27 — Carbon letter bands now use the Sustainable Web Design v4
+  percentiles from CO2.js 0.18 (A+ ≤ 0.04 g CO₂e/visit through E ≤ 0.359 g).
+  The previous table was the v3 scale, so ordinary pages were graded A or A+.
 - 2026-10-27 — Local dev server is fixed on port 8020 (`npm start` / `npm run serve`).
 - 2026-06-10 — Pre-build gap review resolved 4 blockers and refined the design:
   carbon now uses CO2.js `perVisit` (matches the per-visit bands); the API is

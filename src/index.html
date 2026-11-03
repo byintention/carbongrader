@@ -4,17 +4,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="CarbonGrader — grade a web page's sustainability (carbon, hosting, performance)." />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://cdn.jsdelivr.net; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <title>CarbonGrader</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/css/uikit.min.css" />
+  <script src="js/theme-init.js"></script>
+  <link rel="stylesheet" href="assets/css/vendor/uikit.min.css" />
   <link rel="stylesheet" href="assets/css/app.css" />
 </head>
 <body>
   <a class="cg-skip" href="#main">Skip to content</a>
   <header class="uk-section uk-section-xsmall uk-section-muted">
-    <div class="uk-container uk-container-small uk-text-center">
-      <h1 class="uk-heading-medium uk-margin-remove">Carbon<span class="cg-brand">Grader</span></h1>
-      <p class="uk-text-meta uk-margin-remove-top">Grade a web page's carbon footprint, hosting, and performance.</p>
+    <div class="uk-container uk-container-small cg-header">
+      <div class="cg-header-copy uk-text-left">
+        <h1 class="uk-heading-medium uk-margin-remove">Carbon<span class="cg-brand">Grader</span></h1>
+        <p class="uk-text-meta uk-margin-remove-top">Grade a web page's carbon footprint, hosting, and performance.</p>
+      </div>
+      <button type="button" class="cg-theme-toggle" id="theme-toggle" aria-pressed="false">
+        Dark mode
+      </button>
     </div>
   </header>
 
@@ -69,8 +75,9 @@
     </div>
   </main>
 
-  <footer class="uk-section uk-section-xsmall uk-text-center uk-text-meta">
+  <footer class="uk-section uk-section-small uk-text-center">
   <div class="uk-container cg-privacy">
+    <p>Built by <a href="https://byintention.co">Intention</a></p>
     <p>
       Powered by
       <a href="https://www.thegreenwebfoundation.org/co2js/" rel="noopener noreferrer">CO2.js</a>
@@ -83,7 +90,7 @@
       (MIT).
     </p>
     <p class="uk-margin-remove">
-      Recent grades stay in this browser. CarbonGrader is an independent project and is not affiliated with Ecograder.
+      Recent grades and the color theme stay in this browser. CarbonGrader is an independent project and is not affiliated with Ecograder.
     </p>
   </div>
   </footer>

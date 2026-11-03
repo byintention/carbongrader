@@ -46,13 +46,14 @@ export function gradeClass(letter) {
 export function renderLoading(container, status = "queued") {
   container.replaceChildren();
   const wrap = el("div", "cg-loading uk-text-center");
-  wrap.appendChild(el("div", "", status === "running" ? "Running analysis…" : "Queued…"));
-  const note = el(
-    "p",
-    "uk-text-meta",
-    "This can take up to 30 seconds while we fetch PageSpeed and hosting data.",
-  );
-  wrap.appendChild(note);
+  const label =
+    status === "running" ? "Running analysis…" : status === "saved" ? "Loading saved result…" : "Queued…";
+  wrap.appendChild(el("div", "", label));
+  if (status !== "saved") {
+    wrap.appendChild(
+      el("p", "uk-text-meta", "This can take up to 30 seconds while we fetch PageSpeed and hosting data."),
+    );
+  }
   const spinner = el("div", "cg-spinner", "");
   spinner.setAttribute("role", "status");
   spinner.setAttribute("aria-label", "Working");
@@ -281,7 +282,11 @@ function shareBlock(href) {
   });
   row.append(input, btn);
   wrap.append(label, row);
-  const note = el("p", "uk-text-meta uk-margin-small-top uk-margin-remove-bottom", "Opens this page and grades the same URL. Nothing else is included.");
+  const note = el(
+    "p",
+    "uk-text-meta uk-margin-small-top uk-margin-remove-bottom",
+    "Opens this saved snapshot. It does not run a new analysis.",
+  );
   wrap.appendChild(note);
   return wrap;
 }

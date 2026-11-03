@@ -110,8 +110,8 @@ check("letterForScore uses cutoffs", () => {
 check("gradeResult end-to-end on sample payload", () => {
   const g = gradeResult(sampleResult, config);
   assertTrue(g.gramsPerVisit > 0);
-  assertSame("B", g.carbonBand);
-  assertSame(80, g.carbonPoints);
+  assertSame("D", g.carbonBand);
+  assertSame(55, g.carbonPoints);
   assertSame(82, g.components.performance);
   assertSame(100, g.components.hosting);
   assertTrue(g.compositeScore >= 0 && g.compositeScore <= 100);

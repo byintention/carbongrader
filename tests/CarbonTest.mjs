@@ -63,16 +63,28 @@ check("rejects negative bytes", () => {
   }
 });
 
-check("band A+ at very low grams", () => {
-  const b = carbonBandForGrams(0.05, config.carbonBands);
+check("band A+ at the v4 cutoff", () => {
+  const b = carbonBandForGrams(0.04, config.carbonBands);
   assertSame("A+", b.grade);
   assertSame(100, b.points);
 });
 
-check("band B at 0.3g", () => {
-  const b = carbonBandForGrams(0.3, config.carbonBands);
+check("band A just above the A+ cutoff", () => {
+  const b = carbonBandForGrams(0.05, config.carbonBands);
+  assertSame("A", b.grade);
+  assertSame(92, b.points);
+});
+
+check("band B inside the v4 B range", () => {
+  const b = carbonBandForGrams(0.1, config.carbonBands);
   assertSame("B", b.grade);
   assertSame(80, b.points);
+});
+
+check("band E at 0.3g on the v4 scale", () => {
+  const b = carbonBandForGrams(0.3, config.carbonBands);
+  assertSame("E", b.grade);
+  assertSame(42, b.points);
 });
 
 check("band F above highest threshold", () => {
@@ -84,8 +96,8 @@ check("band F above highest threshold", () => {
 check("analyzeCarbon integrates grams + band", () => {
   const r = analyzeCarbon(1_843_200, false, config);
   assertTrue(r.gramsPerVisit > 0);
-  assertSame("B", r.carbonBand); // ~0.27g for this fixture size
-  assertSame(80, r.carbonPoints);
+  assertSame("D", r.carbonBand); // ~0.27g, SWD v4 D is ≤ 0.278
+  assertSame(55, r.carbonPoints);
 });
 
 console.log(`\n${passed} passed, ${failed} failed\n`);

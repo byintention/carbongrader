@@ -1,10 +1,13 @@
-import { createGradeJob, waitForGrade } from "./api.js";
-import { clearHistory, loadHistory, rememberResult, shareHref } from "./history.js";
+import { createGradeJob, fetchSavedResult, waitForGrade } from "./api.js";
+import { clearHistory, isResultId, loadHistory, rememberResult, shareHref } from "./history.js";
 import recommendationsConfig from "./recommendations-config.js";
 import { mapRecommendations } from "./recommendations.js";
 import scoringConfig from "./scoring-config.js";
 import { gradeResult } from "./score.js";
+import { initThemeToggle } from "./theme.js";
 import { renderLoading, renderError, renderResults, renderHistory, clearPanel } from "./ui.js";
+
+initThemeToggle(document.getElementById("theme-toggle"));
 
 const form = document.getElementById("grade-form");
 const urlInput = document.getElementById("url-input");
@@ -48,7 +51,7 @@ form?.addEventListener("submit", async (event) => {
       signal: controller.signal,
       onStatus: (s) => renderLoading(statusPanel, s),
     });
-    showResults(result);
+    showResults(result, { id: created.id });
   } catch (err) {
     if (err.name === "AbortError") return;
     keepStatus = true;
@@ -60,14 +63,15 @@ form?.addEventListener("submit", async (event) => {
   }
 });
 
-function showResults(result, { remember = true } = {}) {
+function showResults(result, { remember = true, id = "" } = {}) {
+  const shareId = isResultId(id) ? id : isResultId(result?.id) ? result.id : "";
   const eco = gradeResult(result, scoringConfig);
   const tips = mapRecommendations(result, recommendationsConfig);
-  const href = shareHref(result, location.origin, location.pathname);
+  const href = shareId ? shareHref(shareId, location.origin, location.pathname) : "";
   renderResults(resultsPanel, result, eco, tips, { shareHref: href });
   resultsPanel.hidden = false;
   resultsPanel.focus();
-  if (remember) rememberResult(result);
+  if (remember) rememberResult(shareId ? { ...result, id: shareId } : result);
   refreshHistory();
 }
 
@@ -105,15 +109,57 @@ function setBusy(busy) {
 
 refreshHistory();
 
-const shared = sharedRequest();
-if (shared && urlInput && form) {
-  urlInput.value = shared.url;
-  const radio = form.querySelector(`input[name="strategy"][value="${shared.strategy}"]`);
-  if (radio) radio.checked = true;
-  form.requestSubmit();
+const saved = savedResultRequest();
+if (saved) {
+  if (!saved.id) {
+    showError("Saved result not found.", "NOT_FOUND");
+  } else {
+    openSavedResult(saved.id);
+  }
+} else {
+  const shared = sharedRequest();
+  if (shared && urlInput && form) {
+    urlInput.value = shared.url;
+    const radio = form.querySelector(`input[name="strategy"][value="${shared.strategy}"]`);
+    if (radio) radio.checked = true;
+    form.requestSubmit();
+  }
 }
 
-/** A share link only carries an http(s) URL and a strategy. */
+/** `?r=` wins over `?url=`. An empty id means the query was present but not a result id. */
+function savedResultRequest() {
+  const params = new URLSearchParams(location.search);
+  if (!params.has("r")) return null;
+  const id = (params.get("r") ?? "").trim();
+  return { id: isResultId(id) ? id : "" };
+}
+
+async function openSavedResult(id) {
+  setBusy(true);
+  if (submitBtn) submitBtn.textContent = "Loading…";
+  clearPanel(resultsPanel);
+  statusPanel.hidden = false;
+  renderLoading(statusPanel, "saved");
+  try {
+    const body = await fetchSavedResult(id);
+    if (!body.ok || !body.result) {
+      showError(body.error?.message ?? "Saved result not found.", body.error?.code ?? "NOT_FOUND");
+      return;
+    }
+    if (urlInput) urlInput.value = body.result.url ?? "";
+    const strategy = body.result.strategy === "desktop" ? "desktop" : "mobile";
+    const radio = form?.querySelector(`input[name="strategy"][value="${strategy}"]`);
+    if (radio) radio.checked = true;
+    showResults(body.result, { id });
+    clearPanel(statusPanel);
+  } catch (err) {
+    showError(err.message ?? "Could not load the saved result.", err.code ?? "");
+  } finally {
+    setBusy(false);
+  }
+}
+
+/** A re-grade link carries an http(s) URL and a strategy. */
 function sharedRequest() {
   const params = new URLSearchParams(location.search);
   const url = params.get("url")?.trim() ?? "";

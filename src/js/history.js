@@ -56,7 +56,7 @@ export function clearHistory(storage = globalThis.localStorage) {
 }
 
 /**
- * Query string for a shareable link. Only the public URL and strategy.
+ * Query string that starts a new grade. Only the public URL and strategy.
  *
  * @param {string} url
  * @param {string} strategy
@@ -68,13 +68,21 @@ export function shareQuery(url, strategy) {
   return params.toString();
 }
 
+/** A saved-result id is the job id: hex, long enough not to guess. */
+export function isResultId(id) {
+  return typeof id === "string" && /^[a-f0-9]{8,64}$/.test(id);
+}
+
 /**
- * @param {object} result
+ * Link that opens a saved snapshot. Empty when the id is not a result id.
+ *
+ * @param {string} id
  * @param {string} origin
  * @param {string} pathname
  */
-export function shareHref(result, origin, pathname) {
-  return `${origin}${pathname}?${shareQuery(result?.url ?? "", result?.strategy ?? "mobile")}`;
+export function shareHref(id, origin, pathname) {
+  if (!isResultId(id)) return "";
+  return `${origin}${pathname}?r=${id}`;
 }
 
 /**
@@ -94,7 +102,7 @@ function sanitizeResult(result) {
   const strategy = result.strategy === "desktop" ? "desktop" : "mobile";
   const resources = Array.isArray(result.page?.resources) ? result.page.resources : [];
   const opportunities = Array.isArray(result.opportunities) ? result.opportunities : [];
-  return {
+  const clean = {
     url: result.url,
     host: typeof result.host === "string" ? result.host : "",
     strategy,
@@ -120,6 +128,8 @@ function sanitizeResult(result) {
       savingsMs: finiteNumber(item?.savingsMs),
     })),
   };
+  if (isResultId(result.id)) clean.id = result.id;
+  return clean;
 }
 
 /** @param {unknown} value */

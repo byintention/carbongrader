@@ -104,15 +104,33 @@ check("clear removes history", () => {
   assertSame(0, loadHistory(storage).length);
 });
 
-check("share query carries only url and strategy", () => {
+check("re-grade query carries only url and strategy", () => {
   assertSame(
     "url=https%3A%2F%2Fexample.com%2Fpath&strategy=desktop",
     shareQuery("https://example.com/path", "desktop"),
   );
+});
+
+check("share link is a saved result id", () => {
   assertSame(
-    "http://localhost/?url=https%3A%2F%2Fexample.com%2F&strategy=mobile",
-    shareHref(sample("https://example.com/"), "http://localhost", "/"),
+    "http://localhost/?r=abcdef0123456789",
+    shareHref("abcdef0123456789", "http://localhost", "/"),
   );
+  assertSame("", shareHref("https://example.com/", "http://localhost", "/"));
+  assertTrue(!shareHref("abcdef0123456789", "http://localhost", "/").includes("example.com"));
+});
+
+check("history keeps a valid result id", () => {
+  const storage = memoryStorage();
+  const result = sample("https://example.com/");
+  result.id = "abcdef0123456789";
+  rememberResult(result, storage);
+  assertSame("abcdef0123456789", loadHistory(storage)[0].result.id);
+
+  const bad = sample("https://other.example/");
+  bad.id = "../nope";
+  rememberResult(bad, storage);
+  assertTrue(!("id" in loadHistory(storage)[0].result));
 });
 
 check("unverified hosting stays unverified", () => {

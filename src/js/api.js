@@ -24,6 +24,17 @@ export async function pollGradeJob(id) {
   return res.json();
 }
 
+/**
+ * GET a saved snapshot by id.
+ * @returns {Promise<{ok:boolean,id?:string,result?:object,error?:object}>}
+ */
+export async function fetchSavedResult(id) {
+  const res = await fetch(`${appConfig.apiBase}?result=${encodeURIComponent(id)}`, {
+    headers: { Accept: "application/json" },
+  });
+  return res.json();
+}
+
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**

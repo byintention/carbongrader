@@ -8,8 +8,9 @@ require_once __DIR__ . '/config.php';
 
 /**
  * Public endpoint (architecture §5).
- *   POST /api/grade.php        { url, strategy?, refresh? }  -> create job
+ *   POST /api/grade.php            { url, strategy?, refresh? }  -> create job
  *   GET  /api/grade.php?id=…                                 -> poll / run job
+ *   GET  /api/grade.php?result=…                             -> read a saved snapshot
  *
  * Thin wrapper: all logic lives in GradeService (unit-tested). This file maps
  * HTTP <-> service and never leaks stack traces.
@@ -61,8 +62,12 @@ if ($method === 'POST') {
     cg_emit($service->createJob($input, $clientIp));
 }
 
+if ($method === 'GET' && isset($_GET['result'])) {
+    cg_emit($service->savedResult((string) $_GET['result']));
+}
+
 if ($method === 'GET' && isset($_GET['id'])) {
     cg_emit($service->poll((string) $_GET['id']));
 }
 
-cg_emit(['ok' => false, 'error' => ['code' => 'INVALID_URL', 'message' => 'Use POST to create a job or GET ?id=… to poll.']]);
+cg_emit(['ok' => false, 'error' => ['code' => 'INVALID_URL', 'message' => 'Use POST to create a job, GET ?id= to poll, or GET ?result= to read a saved result.']]);

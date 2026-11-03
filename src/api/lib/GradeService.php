@@ -8,6 +8,7 @@ require_once __DIR__ . '/UrlValidator.php';
 require_once __DIR__ . '/Cache.php';
 require_once __DIR__ . '/JobStore.php';
 require_once __DIR__ . '/RateLimiter.php';
+require_once __DIR__ . '/ResultStore.php';
 require_once __DIR__ . '/UpstreamException.php';
 
 /**
@@ -34,6 +35,7 @@ final class GradeService
         private Cache $cache,
         private JobStore $jobs,
         private RateLimiter $rateLimiter,
+        private ResultStore $results,
         callable $analyzer,
         private int $cacheTtlSeconds = 43200,
         private string $defaultStrategy = 'mobile',
@@ -77,7 +79,9 @@ final class GradeService
         $cached = $refresh ? null : $this->cache->get($cacheKey);
         if (is_array($cached)) {
             $cached['cached'] = true;
-            $id = $this->jobs->create($jobData + ['status' => 'done', 'result' => $cached]);
+            $public = ResultStore::publicPayload($cached);
+            $id = $this->jobs->create($jobData + ['status' => 'done', 'result' => $public]);
+            $this->results->save($id, $public);
             return ['ok' => true, 'id' => $id, 'status' => 'done'];
         }
 
@@ -135,9 +139,8 @@ final class GradeService
 
             $this->cache->set($cacheKey, $result, $this->cacheTtlSeconds);
             $result['cached'] = false;
-            $this->jobs->update($id, ['status' => 'done', 'result' => $result]);
 
-            return ['ok' => true, 'id' => $id, 'status' => 'done', 'result' => $result];
+            return $this->finish($id, $result);
         } catch (UpstreamException $e) {
             // Provider text can include quota details and project ids. Store a fixed line.
             $error = ['code' => $e->errorCode, 'message' => self::publicUpstreamMessage($e->errorCode)];
@@ -155,8 +158,35 @@ final class GradeService
     private function finishFromCache(string $id, array $cached): array
     {
         $cached['cached'] = true;
-        $this->jobs->update($id, ['status' => 'done', 'result' => $cached]);
-        return ['ok' => true, 'id' => $id, 'status' => 'done', 'result' => $cached];
+        return $this->finish($id, $cached);
+    }
+
+    /**
+     * Read a saved snapshot (GET /api/grade?result=…).
+     *
+     * @return array<string,mixed>
+     */
+    public function savedResult(string $id): array
+    {
+        $result = $this->results->get($id);
+        if ($result === null) {
+            return self::error('NOT_FOUND', 'Unknown result.');
+        }
+        return ['ok' => true, 'id' => $id, 'result' => $result];
+    }
+
+    /**
+     * Mark a job done and keep a durable copy of the public payload.
+     *
+     * @param array<string,mixed> $result
+     * @return array<string,mixed>
+     */
+    private function finish(string $id, array $result): array
+    {
+        $public = ResultStore::publicPayload($result);
+        $this->jobs->update($id, ['status' => 'done', 'result' => $public]);
+        $this->results->save($id, $public);
+        return ['ok' => true, 'id' => $id, 'status' => 'done', 'result' => $public];
     }
 
     private function normalizeStrategy(mixed $strategy): string
