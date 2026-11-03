@@ -263,7 +263,7 @@ button.uk-button {
 }
 
 .cg-header-copy {
-  text-align: left;
+  text-align: center;
 }
 
 .cg-theme-toggle {
@@ -305,6 +305,10 @@ button.uk-button {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+  }
+
+  .cg-header-copy {
+    text-align: left;
   }
 
   .cg-theme-toggle {
@@ -646,7 +650,7 @@ button.uk-button {
   flex: 0 0 auto;
   min-width: 2.4rem;
   height: 2.4rem;
-  padding: 0 0.3rem;
+  padding: 0;
   border-radius: 999px;
   color: #fff;
   font-weight: 800;
@@ -693,4 +697,11 @@ button.uk-button {
 
 .cg-metric .uk-label-success {
   margin-top: .5rem;
+}
+
+#grade-form {
+  legend, label {
+    display: block;
+    padding-bottom: 0.5rem;
+  }
 }

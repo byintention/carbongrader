@@ -376,7 +376,7 @@ function helpCta() {
     el(
       "p",
       "",
-      "Page speed is part of this grade. A slow page sends more data, uses more energy, and people often leave before it finishes loading. We can help you fix it!",
+      "Page speed is part of this grade. A slow page sends more data, uses more energy, and people are more likely to leave before it loads. We can help you fix it!",
     ),
   );
   const link = el("a", "uk-button cg-help-cta-btn", "Get in touch");

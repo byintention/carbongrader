@@ -9,6 +9,7 @@ See `.cursor/rules/200-changelog.mdc` for the workflow.
 ## [Unreleased]
 
 ### Changed
+- 2026-11-03 — The header title and strapline are centered on screens narrower than 720px.
 - 2026-11-03 — Intention links carry only a source: `carbongradercta` on the contact button and `carbongraderfooter` on the footer credit.
 - 2026-11-03 — The contact panel uses UIKit card-body padding.
 - 2026-11-03 — Clear history uses the UIKit danger button.

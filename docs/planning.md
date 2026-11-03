@@ -62,6 +62,7 @@ the carbon model, **UIKit 3** frontend. **No build system** (Prepros only).
   - [x] Clear history uses the UIKit danger button (2026-11-03).
   - [x] "What to improve" shows a contact panel when recommendations are present (2026-11-03).
   - [x] Intention links use only `utm_source`: `carbongradercta` on the contact button, `carbongraderfooter` on the footer (2026-11-03).
+  - [x] Header title and strapline are centered below 720px and left-aligned from there up (2026-11-03).
 
 > Run the app: `npm start` → open `http://localhost:8020/`. Live grading needs
 > `PAGESPEED_API_KEY` in `.env`. Full suite: `npm test` (110 tests).
