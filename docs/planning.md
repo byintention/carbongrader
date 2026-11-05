@@ -67,6 +67,7 @@ the carbon model, **UIKit 3** frontend. **No build system** (Prepros only).
   - [x] UK spelling for analyse, and a larger results subheading with the domain in bold (2026-11-05).
 - [x] **P5.4** done (2026-11-05) — security and docroot audit recorded in `docs/audits.md`. No Critical or High findings.
 - [x] **P5.10** done (2026-11-05) — Open Graph and Twitter card tags. Description matches the meta description. Image is `assets/images/carbon-grader-og.png` (1200×630).
+- [x] **P5.11** done (2026-11-05) — Content-Security-Policy allows the Plausible script, its hashed init snippet, and event posts to `https://plausible.io`.
 
 > Run the app: `npm start` → open `http://localhost:8020/`. Live grading needs
 > `PAGESPEED_API_KEY` in `.env`. Full suite: `npm test` (110 tests).
@@ -232,6 +233,12 @@ note). Files: `src/index.html`, `docs/audits.md`.
     v3 table was scoring v4 `perVisit` grams, so typical pages landed on A/A+.
   - Files: `config/scoring.json`, `src/js/scoring-config.js`,
     `tests/CarbonTest.mjs`, `tests/ScoreTest.mjs`, `docs/architecture.md`.
+- [x] **P5.11 Plausible in the Content-Security-Policy** (2026-11-05)
+  - Done: `script-src` allows `'self'`, `https://plausible.io`, and the sha256
+    of the inline init snippet. `connect-src` allows `https://plausible.io`
+    for `POST /api/event`. The same policy is in the meta tag, `router.php`,
+    and `.htaccess`. No `unsafe-inline`.
+  - Files: `src/index.html`, `src/router.php`, `src/.htaccess`.
 - [x] **P5.10 Open Graph tags** (2026-11-05)
   - Done: homepage head carries `og:title`, `og:description` (same text as
     `meta name="description"`), `og:url`, and `og:image` for

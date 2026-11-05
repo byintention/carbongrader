@@ -19,7 +19,7 @@
   <meta name="twitter:description" content="CarbonGrader — grade a web page's sustainability (carbon, hosting, performance)." />
   <meta name="twitter:image" content="https://grader.byintention.co/assets/images/carbon-grader-og.png" />
   <meta name="twitter:image:alt" content="How green is your site? Test it for free today." />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://plausible.io 'sha256-XVj80uUSzt3JWa6FTzTaafmEiRYXOb5edzL/N5F/s6U='; style-src 'self'; img-src 'self' data:; connect-src 'self' https://plausible.io; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <title>CarbonGrader</title>
   <script src="js/theme-init.js"></script>
   <link rel="stylesheet" href="assets/css/vendor/uikit.min.css" />
@@ -119,6 +119,7 @@
       The URL is sent to Google PageSpeed Insights and the Green Web Foundation.<br>
       This server keeps a short-lived copy so the same page is not looked up twice.<br>
       Recent grades and the color theme stay in this browser.<br>
+      Page views are counted by Plausible, without cookies.<br>
       CarbonGrader is an independent project and is not affiliated with Ecograder.
     </p>
   </div>

@@ -13,6 +13,7 @@ See `.cursor/rules/200-changelog.mdc` for the workflow.
 - 2026-11-05 — Security and docroot audit (P5.4) recorded in `docs/audits.md`. No product behavior change.
 
 ### Changed
+- 2026-11-05 — Content-Security-Policy allows the Plausible script and its page-view posts. The footer notes that page views are counted without cookies.
 - 2026-11-05 — Copy uses UK spelling: analyse, analysed, and analysing. The line under Results is 125% of the body size, and the domain name is bold.
 - 2026-11-03 — The header title and strapline are centered on screens narrower than 720px.
 - 2026-11-03 — Intention links carry only a source: `carbongradercta` on the contact button and `carbongraderfooter` on the footer credit.

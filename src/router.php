@@ -73,10 +73,10 @@ function cg_security_headers(): void
     header('X-Frame-Options: DENY');
     header(
         "Content-Security-Policy: default-src 'self'; "
-        . "script-src 'self'; "
+        . "script-src 'self' https://plausible.io 'sha256-XVj80uUSzt3JWa6FTzTaafmEiRYXOb5edzL/N5F/s6U='; "
         . "style-src 'self'; "
         . "img-src 'self' data:; "
-        . "connect-src 'self'; "
+        . "connect-src 'self' https://plausible.io; "
         . "font-src 'self'; "
         . "object-src 'none'; "
         . "base-uri 'self'; "

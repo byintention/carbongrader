@@ -302,8 +302,10 @@ var/                          # writable, non-public: cache/, jobs/, results/, r
 - **Secret hygiene:** PSI key server-side only; never in client JS or responses.
 - **Input validation:** strict URL parsing; reject malformed/oversized input.
 - **Output:** escape all dynamic content inserted into the DOM (`textContent`, no `innerHTML` with untrusted data).
-- **CSP:** strict. UIKit CSS and CO2.js are vendored, so `style-src` and
-  `script-src` are `'self'` only. No `esm.sh`/jsdelivr. No `unsafe-inline`/`eval`.
+- **CSP:** strict. UIKit CSS and CO2.js are vendored, so `style-src` is
+  `'self'` only. `script-src` is `'self'`, `https://plausible.io`, and a hash of
+  the Plausible init snippet. `connect-src` is `'self'` and `https://plausible.io`.
+  No `esm.sh`/jsdelivr. No `unsafe-inline`/`eval`.
 - **Docroot isolation:** docroot is `src/`; deny web access to `config/`, `var/`,
   `.env`, `docs/`, `tests/`, and `api/lib/` via server rules (`.htaccess`/nginx).
 - **Rate limiting:** per-IP on job creation to protect quota (storage in `var/`).

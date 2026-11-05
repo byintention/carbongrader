@@ -5,6 +5,11 @@
 
 ---
 
+## 2026-11-05 — Plausible allowed in CSP
+- **Findings:** The homepage loads `https://plausible.io/js/pa-NELsTUyGsq018Jhd_Qqhs.js` and a short inline init. `script-src 'self'` blocked both. The script posts page views to `https://plausible.io/api/event`, which `connect-src 'self'` would also block.
+- **Actions taken:** `script-src` is now `'self'`, `https://plausible.io`, and `sha256-XVj80uUSzt3JWa6FTzTaafmEiRYXOb5edzL/N5F/s6U=` (the exact init snippet). `connect-src` adds `https://plausible.io`. No `unsafe-inline`. Updated the meta tag, `src/router.php`, and `src/.htaccess` together, because the browser applies the meta policy and the header policy.
+- **Follow-ups:** Reformatting the inline snippet changes the hash and will block it again. Keep those two lines byte-for-byte, or move them into a same-origin file.
+
 ## 2026-11-05 — P5.4 security and docroot audit
 
 Code review of the running app, plus status-code checks against `https://grader.byintention.co/` (headers and paths only; denied responses were HTML error pages, not file bodies). No Critical or High issues.
