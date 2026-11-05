@@ -8,7 +8,7 @@ import { dirname, join } from "node:path";
 import {
   estimateGramsPerVisit,
   carbonBandForGrams,
-  analyzeCarbon,
+  analyseCarbon,
 } from "../src/js/carbon.js";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -93,8 +93,8 @@ check("band F above highest threshold", () => {
   assertSame(25, b.points);
 });
 
-check("analyzeCarbon integrates grams + band", () => {
-  const r = analyzeCarbon(1_843_200, false, config);
+check("analyseCarbon integrates grams + band", () => {
+  const r = analyseCarbon(1_843_200, false, config);
   assertTrue(r.gramsPerVisit > 0);
   assertSame("D", r.carbonBand); // ~0.27g, SWD v4 D is ≤ 0.278
   assertSame(55, r.carbonPoints);

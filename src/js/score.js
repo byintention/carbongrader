@@ -1,4 +1,4 @@
-import { analyzeCarbon } from "./carbon.js";
+import { analyseCarbon } from "./carbon.js";
 
 /**
  * Clamp a value to [min, max].
@@ -97,7 +97,7 @@ export function letterForScore(score, letterCutoffs) {
 export function gradeResult(result, config) {
   const totalBytes = result?.page?.totalBytes ?? 0;
   const isGreen = Boolean(result?.hosting?.green);
-  const carbon = analyzeCarbon(totalBytes, isGreen, config);
+  const carbon = analyseCarbon(totalBytes, isGreen, config);
 
   const components = {
     carbon: carbon.carbonPoints,

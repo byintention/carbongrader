@@ -34,7 +34,7 @@ final class PageSpeedClient
     }
 
     /**
-     * Analyze a URL and return the normalized page metrics.
+     * Analyse a URL and return the normalized page metrics.
      *
      * @return array{
      *     totalBytes: int,
@@ -44,7 +44,7 @@ final class PageSpeedClient
      * }
      * @throws UpstreamException on transport/API failure, invalid JSON, or a failed analysis
      */
-    public function analyze(string $url, string $strategy = 'mobile'): array
+    public function analyse(string $url, string $strategy = 'mobile'): array
     {
         if (!in_array($strategy, self::STRATEGIES, true)) {
             throw new UpstreamException('UPSTREAM', "Invalid strategy: {$strategy}.");
@@ -70,7 +70,7 @@ final class PageSpeedClient
 
         if (isset($lhr['runtimeError']) && is_array($lhr['runtimeError'])) {
             $rtCode = (string) ($lhr['runtimeError']['code'] ?? 'UNKNOWN');
-            $rtMsg = (string) ($lhr['runtimeError']['message'] ?? 'Lighthouse could not analyze the page.');
+            $rtMsg = (string) ($lhr['runtimeError']['message'] ?? 'Lighthouse could not analyse the page.');
             throw new UpstreamException('PSI_ANALYSIS_FAILED', "Lighthouse error {$rtCode}: {$rtMsg}");
         }
 

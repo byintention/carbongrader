@@ -368,6 +368,16 @@ button.uk-button {
   text-align: center;
 }
 
+.cg-results-url {
+  margin: 0;
+  color: var(--cg-muted);
+}
+
+.cg-results-url strong {
+  font-weight: 700;
+  color: var(--cg-text);
+}
+
 .cg-metrics {
   display: grid;
   grid-template-columns: 1fr 1fr;

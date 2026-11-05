@@ -45,7 +45,7 @@ export function carbonBandForGrams(grams, carbonBands) {
  * @param {{ carbonBands: Array }} config scoring config (carbonBands required)
  * @returns {{ gramsPerVisit: number, carbonBand: string, carbonPoints: number }}
  */
-export function analyzeCarbon(totalBytes, isGreen, config) {
+export function analyseCarbon(totalBytes, isGreen, config) {
   const gramsPerVisit = estimateGramsPerVisit(totalBytes, isGreen);
   const { grade, points } = carbonBandForGrams(gramsPerVisit, config.carbonBands);
   return { gramsPerVisit, carbonBand: grade, carbonPoints: points };

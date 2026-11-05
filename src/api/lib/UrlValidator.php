@@ -133,7 +133,7 @@ final class UrlValidator
     {
         // Refuse non-routable single-label names (localhost, intranet, ...).
         if ($host === 'localhost' || !str_contains($host, '.')) {
-            throw new ValidationException('BLOCKED_HOST', 'Refusing to analyze a non-public host.');
+            throw new ValidationException('BLOCKED_HOST', 'Refusing to analyse a non-public host.');
         }
         $label = '[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?';
         if (!preg_match('/^(?=.{1,253}$)' . $label . '(?:\.' . $label . ')+$/', $host)) {

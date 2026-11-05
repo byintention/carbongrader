@@ -9,14 +9,15 @@ See `.cursor/rules/200-changelog.mdc` for the workflow.
 ## [Unreleased]
 
 ### Changed
+- 2026-11-05 — Copy uses UK spelling: analyse, analysed, and analysing. The line under Results is 125% of the body size, and the domain name is bold.
 - 2026-11-03 — The header title and strapline are centered on screens narrower than 720px.
 - 2026-11-03 — Intention links carry only a source: `carbongradercta` on the contact button and `carbongraderfooter` on the footer credit.
 - 2026-11-03 — The contact panel uses UIKit card-body padding.
 - 2026-11-03 — Clear history uses the UIKit danger button.
-- 2026-11-03 — Headings no longer use `uk-card-title`. "Analyze a URL" and "Results" use the normal heading size.
+- 2026-11-03 — Headings no longer use `uk-card-title`. "Analyse a URL" and "Results" use the normal heading size.
 - 2026-11-03 — Recent grades uses the same divider line as the other section headings. Heading tags no longer use `uk-h4`.
 - 2026-11-03 — The share link has a "Share this result" heading above the form.
-- 2026-11-03 — The results panel opens with a centered Results heading. The analyzed URL sits under that heading.
+- 2026-11-03 — The results panel opens with a centered Results heading. The analysed URL sits under that heading.
 - 2026-11-03 — Recent grades sit below the results, with a spacer between the two panels.
 - 2026-11-03 — The share copy button uses the UIKit primary button.
 - 2026-11-03 — Clear history uses the UIKit secondary button.
@@ -58,7 +59,7 @@ See `.cursor/rules/200-changelog.mdc` for the workflow.
 - 2026-07-07 — Async grading endpoint (P1.5), completing the PHP backend
   (Phase 1): `GradeService` orchestrates validate → rate-limit → cache → job
   create/poll with a single-flight run-on-poll; `config.php` loads `.env` (no
-  dependency) and wires a production analyzer that fetches Greencheck + PageSpeed
+  dependency) and wires a production analyser that fetches Greencheck + PageSpeed
   in parallel (`Http::getMany`), treating green hosting as best-effort and
   PageSpeed as required; `grade.php` is a thin HTTP wrapper (`POST` create /
   `GET ?id=` poll) with error-code→HTTP-status mapping. 10 offline
@@ -97,6 +98,7 @@ See `.cursor/rules/200-changelog.mdc` for the workflow.
   and `package.json`.
 
 ### Fixed
+- 2026-11-05 — Opening a recent grade clears the URL field and resets the strategy to Mobile. A grade still in progress is cancelled, so the results match the row that was opened.
 - 2026-10-14 — Grade failures stay visible. The submit handler was clearing the
   status panel immediately after rendering an error.
 

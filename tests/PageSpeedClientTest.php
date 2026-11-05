@@ -72,14 +72,14 @@ echo "PageSpeedClient\n";
 
 check('extracts total bytes and performance score', function () {
     $client = new PageSpeedClient('', 35, stub(200, fixture('pagespeed_example.json')));
-    $r = $client->analyze('https://example.com/', 'mobile');
+    $r = $client->analyse('https://example.com/', 'mobile');
     assertSame(1843200, $r['totalBytes']);
     assertSame(0.82, $r['performanceScore']);
 });
 
 check('aggregates resources by type from network-requests', function () {
     $client = new PageSpeedClient('', 35, stub(200, fixture('pagespeed_example.json')));
-    $r = $client->analyze('https://example.com/');
+    $r = $client->analyse('https://example.com/');
     $img = resourceOf($r['resources'], 'image');
     $script = resourceOf($r['resources'], 'script');
     $font = resourceOf($r['resources'], 'font');
@@ -92,13 +92,13 @@ check('aggregates resources by type from network-requests', function () {
 
 check('resources are sorted by bytes descending', function () {
     $client = new PageSpeedClient('', 35, stub(200, fixture('pagespeed_example.json')));
-    $r = $client->analyze('https://example.com/');
+    $r = $client->analyse('https://example.com/');
     assertSame('image', $r['resources'][0]['type']);
 });
 
 check('extracts opportunities, filters zero-savings, sorts desc', function () {
     $client = new PageSpeedClient('', 35, stub(200, fixture('pagespeed_example.json')));
-    $r = $client->analyze('https://example.com/');
+    $r = $client->analyse('https://example.com/');
     assertSame(2, count($r['opportunities']), 'render-blocking (0ms) excluded');
     assertSame('uses-optimized-images', $r['opportunities'][0]['id']);
     assertSame(1200, $r['opportunities'][0]['savingsMs']);
@@ -108,7 +108,7 @@ check('extracts opportunities, filters zero-savings, sorts desc', function () {
 check('builds URL with url/category/strategy/key', function () {
     $captured = '';
     $client = new PageSpeedClient('SECRET_KEY', 35, stub(200, fixture('pagespeed_example.json'), $captured));
-    $client->analyze('https://example.com/?a=1', 'desktop');
+    $client->analyse('https://example.com/?a=1', 'desktop');
     assertTrue(str_starts_with($captured, 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed?'), 'base');
     assertTrue(str_contains($captured, 'strategy=desktop'), 'strategy');
     assertTrue(str_contains($captured, 'category=performance'), 'category');
@@ -119,14 +119,14 @@ check('builds URL with url/category/strategy/key', function () {
 check('omits key when none provided', function () {
     $captured = '';
     $client = new PageSpeedClient('', 35, stub(200, fixture('pagespeed_example.json'), $captured));
-    $client->analyze('https://example.com/');
+    $client->analyse('https://example.com/');
     assertTrue(!str_contains($captured, 'key='), 'no key param');
 });
 
 check('runtime error -> PSI_ANALYSIS_FAILED', function () {
     $client = new PageSpeedClient('', 35, stub(200, fixture('pagespeed_runtime_error.json')));
     try {
-        $client->analyze('https://unreachable.example/');
+        $client->analyse('https://unreachable.example/');
     } catch (UpstreamException $e) {
         assertSame('PSI_ANALYSIS_FAILED', $e->errorCode);
         return;
@@ -137,7 +137,7 @@ check('runtime error -> PSI_ANALYSIS_FAILED', function () {
 check('HTTP 429 -> RATE_LIMITED', function () {
     $client = new PageSpeedClient('', 35, stub(429, '{"error":{"code":429,"message":"quota"}}'));
     try {
-        $client->analyze('https://example.com/');
+        $client->analyse('https://example.com/');
     } catch (UpstreamException $e) {
         assertSame('RATE_LIMITED', $e->errorCode);
         return;
@@ -148,7 +148,7 @@ check('HTTP 429 -> RATE_LIMITED', function () {
 check('API error object -> UPSTREAM', function () {
     $client = new PageSpeedClient('', 35, stub(400, '{"error":{"code":400,"message":"bad key"}}'));
     try {
-        $client->analyze('https://example.com/');
+        $client->analyse('https://example.com/');
     } catch (UpstreamException $e) {
         assertSame('UPSTREAM', $e->errorCode);
         return;
@@ -159,7 +159,7 @@ check('API error object -> UPSTREAM', function () {
 check('invalid JSON -> UPSTREAM', function () {
     $client = new PageSpeedClient('', 35, stub(200, '<html>nope</html>'));
     try {
-        $client->analyze('https://example.com/');
+        $client->analyse('https://example.com/');
     } catch (UpstreamException $e) {
         assertSame('UPSTREAM', $e->errorCode);
         return;
@@ -170,7 +170,7 @@ check('invalid JSON -> UPSTREAM', function () {
 check('invalid strategy -> UPSTREAM', function () {
     $client = new PageSpeedClient('', 35, stub(200, fixture('pagespeed_example.json')));
     try {
-        $client->analyze('https://example.com/', 'tablet');
+        $client->analyse('https://example.com/', 'tablet');
     } catch (UpstreamException $e) {
         assertSame('UPSTREAM', $e->errorCode);
         return;

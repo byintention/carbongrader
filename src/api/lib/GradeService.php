@@ -22,12 +22,12 @@ final class GradeService
     private const STRATEGIES = ['mobile', 'desktop'];
 
     /** @var callable(array<string,mixed>):array<string,mixed> */
-    private $analyzer;
+    private $analyser;
     /** @var (callable(string):array<string>)|null */
     private $resolver;
 
     /**
-     * @param callable(array<string,mixed>):array<string,mixed> $analyzer
+     * @param callable(array<string,mixed>):array<string,mixed> $analyser
      *        Given a job, returns the result payload or throws UpstreamException.
      * @param (callable(string):array<string>)|null $resolver DNS resolver for URL validation.
      */
@@ -36,12 +36,12 @@ final class GradeService
         private JobStore $jobs,
         private RateLimiter $rateLimiter,
         private ResultStore $results,
-        callable $analyzer,
+        callable $analyser,
         private int $cacheTtlSeconds = 43200,
         private string $defaultStrategy = 'mobile',
         ?callable $resolver = null,
     ) {
-        $this->analyzer = $analyzer;
+        $this->analyser = $analyser;
         $this->resolver = $resolver;
     }
 
@@ -135,7 +135,7 @@ final class GradeService
             }
 
             $this->jobs->update($id, ['status' => 'running']);
-            $result = ($this->analyzer)($job);
+            $result = ($this->analyser)($job);
 
             $this->cache->set($cacheKey, $result, $this->cacheTtlSeconds);
             $result['cached'] = false;
@@ -203,7 +203,7 @@ final class GradeService
         return match ($code) {
             'RATE_LIMITED' => 'PageSpeed quota is used up for now. Try again later.',
             'TIMEOUT' => 'The analysis timed out. Try again.',
-            'PSI_ANALYSIS_FAILED' => 'PageSpeed could not analyze this page. It may be blocked or unavailable.',
+            'PSI_ANALYSIS_FAILED' => 'PageSpeed could not analyse this page. It may be blocked or unavailable.',
             default => 'A data source could not be reached. Try again in a moment.',
         };
     }

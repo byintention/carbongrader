@@ -100,14 +100,14 @@ function cg_replay(array $response): callable
 }
 
 /**
- * The production analyzer: fetch Greencheck + PageSpeed in parallel, parse each,
+ * The production analyser: fetch Greencheck + PageSpeed in parallel, parse each,
  * and assemble the result payload (architecture §5.3). Greencheck failures are
  * non-fatal (host reported grey + unverified); a PageSpeed failure fails the job.
  *
  * @param array<string,mixed> $config
  * @return callable(array<string,mixed>):array<string,mixed>
  */
-function cg_make_analyzer(array $config): callable
+function cg_make_analyser(array $config): callable
 {
     return static function (array $job) use ($config): array {
         $host = (string) $job['host'];
@@ -124,7 +124,7 @@ function cg_make_analyzer(array $config): callable
 
         // PageSpeed is the critical path — let its errors propagate.
         $page = (new PageSpeedClient((string) $config['pagespeedApiKey'], $timeout, cg_replay($responses['psi'])))
-            ->analyze($url, $strategy);
+            ->analyse($url, $strategy);
 
         // Green hosting is best-effort.
         try {
@@ -163,7 +163,7 @@ function cg_make_grade_service(array $config): GradeService
         new JobStore($varDir),
         new RateLimiter($varDir . '/ratelimit', (int) $config['rateLimitPerMinute']),
         new ResultStore($varDir . '/results'),
-        cg_make_analyzer($config),
+        cg_make_analyser($config),
         (int) $config['cacheTtlPsi'],
         (string) $config['strategyDefault'],
     );

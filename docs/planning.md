@@ -55,7 +55,7 @@ the carbon model, **UIKit 3** frontend. **No build system** (Prepros only).
   - [x] Clear history uses the UIKit secondary button (2026-11-03).
   - [x] Share copy button uses the UIKit primary button (2026-11-03).
   - [x] Recent grades sit below the results, with a spacer when both are showing (2026-11-03).
-  - [x] Results heading sits at the top of the results panel, centered, with the analyzed URL under it (2026-11-03).
+  - [x] Results heading sits at the top of the results panel, centered, with the analysed URL under it (2026-11-03).
   - [x] Share block has an h2 divider heading, "Share this result" (2026-11-03).
   - [x] Recent grades heading uses the divider line, and no heading uses `uk-h4` (2026-11-03).
   - [x] Headings no longer use `uk-card-title` (2026-11-03).
@@ -63,6 +63,8 @@ the carbon model, **UIKit 3** frontend. **No build system** (Prepros only).
   - [x] "What to improve" shows a contact panel when recommendations are present (2026-11-03).
   - [x] Intention links use only `utm_source`: `carbongradercta` on the contact button, `carbongraderfooter` on the footer (2026-11-03).
   - [x] Header title and strapline are centered below 720px and left-aligned from there up (2026-11-03).
+  - [x] Recent grades clears the grading form (2026-11-05). The URL field and strategy reset, and an in-progress grade is cancelled so the dashboard matches the row that was opened.
+  - [x] UK spelling for analyse, and a larger results subheading with the domain in bold (2026-11-05).
 
 > Run the app: `npm start` → open `http://localhost:8020/`. Live grading needs
 > `PAGESPEED_API_KEY` in `.env`. Full suite: `npm test` (110 tests).
@@ -120,7 +122,7 @@ within a phase are mutually exclusive; phases are ordered by dependency.
   `src/api/lib/UpstreamException.php`, `tests/GreencheckClientTest.php`,
   `tests/fixtures/greencheck_{green,grey}.json`.
 - [x] **P1.3 PageSpeed client** (2026-07-07)
-  - Done: `PageSpeedClient::analyze($url, $strategy)` → `{totalBytes,
+  - Done: `PageSpeedClient::analyse($url, $strategy)` → `{totalBytes,
   performanceScore, resources[], opportunities[]}`. Extracts
   `total-byte-weight` (fallback: sum of network requests), performance score,
   per-type totals rebuilt from `network-requests`, and opportunity audits
@@ -141,7 +143,7 @@ within a phase are mutually exclusive; phases are ordered by dependency.
 - [x] **P1.5 `grade.php` endpoint (async)** (2026-07-07)
   - Done: logic in `GradeService` (create + poll, single-flight run-on-poll,
   cache incl. strategy in key, `refresh` bypass, rate limit on create, typed
-  errors). `config.php` = minimal `.env` loader + factory + production analyzer
+  errors). `config.php` = minimal `.env` loader + factory + production analyser
   (parallel Greencheck+PSI via `Http::getMany`; Greencheck best-effort/`verified`
   flag, PSI failures fatal). `grade.php` = thin HTTP wrapper (code→HTTP status,
   `Retry-After`, safe JSON, no stack traces). 10 `GradeService` tests + HTTP
@@ -156,7 +158,7 @@ within a phase are mutually exclusive; phases are ordered by dependency.
 
 - [x] **P2.1 CO2.js wrapper**
   - Done: `estimateGramsPerVisit()` via vendored CO2.js `perVisit()`;
-  `carbonBandForGrams()` + `analyzeCarbon()` map to SWD bands from config.
+  `carbonBandForGrams()` + `analyseCarbon()` map to SWD bands from config.
   7 tests via `node tests/CarbonTest.mjs`.
   - Files: `src/js/carbon.js`, `src/js/scoring-config.js`.
 - [x] **P2.2 Composite EcoGrade**
@@ -200,7 +202,7 @@ within a phase are mutually exclusive; phases are ordered by dependency.
 SVG/UIKit progress, no chart lib). Files: `src/assets/css/app.css`, `src/index.html`, `src/js/ui.js`.
 - **P5.2 Result history + shareable link** (localStorage, no sensitive data). Files: `src/js/*`.
 - **P5.3 Tests** (PHPUnit via Composer + browser JS spec runner + fixtures). Files: `tests/`**.
-- **P5.4 Security + docroot audit** (CSP, SSRF cases, secret hygiene, rate
+- [~] **P5.4 Security + docroot audit** (CSP, SSRF cases, secret hygiene, rate
 limits, deny non-public dirs) → log in `docs/audits.md`.
 - **P5.5 Legal & attribution** (distinct branding vs. Ecograder™; credits for
 Google PSI, Green Web Foundation, CO2.js, UIKit; PSI/GWF ToS check; privacy

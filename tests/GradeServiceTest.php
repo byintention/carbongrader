@@ -60,8 +60,8 @@ function rrmdir(string $dir): void
     @rmdir($dir);
 }
 
-/** A stub analyzer that records how many times it ran. */
-function countingAnalyzer(int &$calls): callable
+/** A stub analyser that records how many times it ran. */
+function countingAnalyser(int &$calls): callable
 {
     return static function (array $job) use (&$calls): array {
         $calls++;
@@ -78,7 +78,7 @@ function countingAnalyzer(int &$calls): callable
 
 function makeService(
     string $dir,
-    callable $analyzer,
+    callable $analyser,
     int $maxPerMinute = 100,
     ?callable $resolver = null,
     int $ttl = 3600,
@@ -88,7 +88,7 @@ function makeService(
         new JobStore($dir),
         new RateLimiter($dir . '/ratelimit', $maxPerMinute),
         new ResultStore($dir . '/results'),
-        $analyzer,
+        $analyser,
         $ttl,
         'mobile',
         $resolver,
@@ -102,7 +102,7 @@ $publicResolver = static fn (string $host): array => ['93.184.216.34'];
 check('create then poll runs analysis and returns result', function () use ($publicResolver) {
     $dir = tmpDir();
     $calls = 0;
-    $svc = makeService($dir, countingAnalyzer($calls), 100, $publicResolver);
+    $svc = makeService($dir, countingAnalyser($calls), 100, $publicResolver);
     $create = $svc->createJob(['url' => 'https://example.com/'], '203.0.113.1');
     assertSame(true, $create['ok']);
     assertSame('queued', $create['status']);
@@ -117,34 +117,34 @@ check('create then poll runs analysis and returns result', function () use ($pub
 check('second create for same url hits cache (no re-analysis)', function () use ($publicResolver) {
     $dir = tmpDir();
     $calls = 0;
-    $svc = makeService($dir, countingAnalyzer($calls), 100, $publicResolver);
+    $svc = makeService($dir, countingAnalyser($calls), 100, $publicResolver);
     $first = $svc->createJob(['url' => 'https://example.com/'], '203.0.113.1');
     $svc->poll($first['id']); // populates cache
     $second = $svc->createJob(['url' => 'https://example.com/'], '203.0.113.1');
     assertSame('done', $second['status'], 'cache hit on create');
     $poll = $svc->poll($second['id']);
     assertSame(true, $poll['result']['cached']);
-    assertSame(1, $calls, 'analyzer ran only once');
+    assertSame(1, $calls, 'analyser ran only once');
     rrmdir($dir);
 });
 
 check('refresh bypasses cache', function () use ($publicResolver) {
     $dir = tmpDir();
     $calls = 0;
-    $svc = makeService($dir, countingAnalyzer($calls), 100, $publicResolver);
+    $svc = makeService($dir, countingAnalyser($calls), 100, $publicResolver);
     $first = $svc->createJob(['url' => 'https://example.com/'], '203.0.113.1');
     $svc->poll($first['id']);
     $refresh = $svc->createJob(['url' => 'https://example.com/', 'refresh' => true], '203.0.113.1');
     assertSame('queued', $refresh['status'], 'refresh does not use cache');
     $svc->poll($refresh['id']);
-    assertSame(2, $calls, 'analyzer ran again for refresh');
+    assertSame(2, $calls, 'analyser ran again for refresh');
     rrmdir($dir);
 });
 
 check('strategy is part of the cache key', function () use ($publicResolver) {
     $dir = tmpDir();
     $calls = 0;
-    $svc = makeService($dir, countingAnalyzer($calls), 100, $publicResolver);
+    $svc = makeService($dir, countingAnalyser($calls), 100, $publicResolver);
     $svc->poll($svc->createJob(['url' => 'https://example.com/', 'strategy' => 'mobile'], '203.0.113.1')['id']);
     $desktop = $svc->createJob(['url' => 'https://example.com/', 'strategy' => 'desktop'], '203.0.113.1');
     assertSame('queued', $desktop['status'], 'desktop not served from mobile cache');
@@ -154,7 +154,7 @@ check('strategy is part of the cache key', function () use ($publicResolver) {
 check('poll unknown id -> NOT_FOUND', function () {
     $dir = tmpDir();
     $calls = 0;
-    $svc = makeService($dir, countingAnalyzer($calls));
+    $svc = makeService($dir, countingAnalyser($calls));
     $r = $svc->poll('abcdef1234');
     assertSame(false, $r['ok']);
     assertSame('NOT_FOUND', $r['error']['code']);
@@ -164,7 +164,7 @@ check('poll unknown id -> NOT_FOUND', function () {
 check('invalid url -> INVALID_URL', function () {
     $dir = tmpDir();
     $calls = 0;
-    $svc = makeService($dir, countingAnalyzer($calls));
+    $svc = makeService($dir, countingAnalyser($calls));
     $r = $svc->createJob(['url' => 'ftp://example.com'], '203.0.113.1');
     assertSame(false, $r['ok']);
     assertSame('INVALID_URL', $r['error']['code']);
@@ -174,7 +174,7 @@ check('invalid url -> INVALID_URL', function () {
 check('private host -> BLOCKED_HOST', function () {
     $dir = tmpDir();
     $calls = 0;
-    $svc = makeService($dir, countingAnalyzer($calls));
+    $svc = makeService($dir, countingAnalyser($calls));
     $r = $svc->createJob(['url' => 'http://127.0.0.1/'], '203.0.113.1');
     assertSame(false, $r['ok']);
     assertSame('BLOCKED_HOST', $r['error']['code']);
@@ -184,7 +184,7 @@ check('private host -> BLOCKED_HOST', function () {
 check('rate limit blocks after the limit', function () use ($publicResolver) {
     $dir = tmpDir();
     $calls = 0;
-    $svc = makeService($dir, countingAnalyzer($calls), 1, $publicResolver);
+    $svc = makeService($dir, countingAnalyser($calls), 1, $publicResolver);
     $first = $svc->createJob(['url' => 'https://example.com/'], '198.51.100.7');
     assertSame(true, $first['ok']);
     $second = $svc->createJob(['url' => 'https://example.com/'], '198.51.100.7');
@@ -194,12 +194,12 @@ check('rate limit blocks after the limit', function () use ($publicResolver) {
     rrmdir($dir);
 });
 
-check('analyzer failure -> job error (ok:true, status:error)', function () use ($publicResolver) {
+check('analyser failure -> job error (ok:true, status:error)', function () use ($publicResolver) {
     $dir = tmpDir();
-    $analyzer = static function (array $job): array {
+    $analyser = static function (array $job): array {
         throw new UpstreamException('PSI_ANALYSIS_FAILED', 'boom');
     };
-    $svc = makeService($dir, $analyzer, 100, $publicResolver);
+    $svc = makeService($dir, $analyser, 100, $publicResolver);
     $create = $svc->createJob(['url' => 'https://example.com/'], '203.0.113.1');
     $poll = $svc->poll($create['id']);
     assertSame(true, $poll['ok']);
@@ -222,7 +222,7 @@ check('poll returns running when single-flight lock is held', function () use ($
         $jobs,
         new RateLimiter($dir . '/ratelimit', 100),
         new ResultStore($dir . '/results'),
-        countingAnalyzer($calls),
+        countingAnalyser($calls),
         3600,
         'mobile',
         $publicResolver,
@@ -232,7 +232,7 @@ check('poll returns running when single-flight lock is held', function () use ($
     $held = $jobs->acquireLock((string) $job['canonicalKey']); // simulate another worker
     $poll = $svc->poll($create['id']);
     assertSame('running', $poll['status']);
-    assertSame(0, $calls, 'analyzer not run while lock held');
+    assertSame(0, $calls, 'analyser not run while lock held');
     $jobs->releaseLock($held);
     rrmdir($dir);
 });
@@ -246,7 +246,7 @@ check('fresh analysis is saved and a failed job is not', function () use ($publi
         new JobStore($dir),
         new RateLimiter($dir . '/ratelimit', 100),
         $results,
-        countingAnalyzer($calls),
+        countingAnalyser($calls),
         3600,
         'mobile',
         $publicResolver,
@@ -290,7 +290,7 @@ check('cache hit on create saves a second snapshot', function () use ($publicRes
         new JobStore($dir),
         new RateLimiter($dir . '/ratelimit', 100),
         $results,
-        countingAnalyzer($calls),
+        countingAnalyser($calls),
         3600,
         'mobile',
         $publicResolver,
@@ -317,7 +317,7 @@ check('poll uses a result that landed in cache and strips extra fields', functio
         $jobs,
         new RateLimiter($dir . '/ratelimit', 100),
         $results,
-        countingAnalyzer($calls),
+        countingAnalyser($calls),
         3600,
         'mobile',
         $publicResolver,
@@ -335,7 +335,7 @@ check('poll uses a result that landed in cache and strips extra fields', functio
         'apiKey' => 'secret',
     ], 3600);
     $poll = $svc->poll($create['id']);
-    assertSame(0, $calls, 'analyzer not run when cache filled first');
+    assertSame(0, $calls, 'analyser not run when cache filled first');
     assertSame(true, $poll['result']['cached']);
     assertTrue(!array_key_exists('apiKey', $poll['result']));
     $saved = $results->get($create['id']);
@@ -347,7 +347,7 @@ check('poll uses a result that landed in cache and strips extra fields', functio
 check('savedResult rejects unknown and malformed ids', function () {
     $dir = tmpDir();
     $calls = 0;
-    $svc = makeService($dir, countingAnalyzer($calls));
+    $svc = makeService($dir, countingAnalyser($calls));
     $missing = $svc->savedResult('abcdef12');
     assertSame(false, $missing['ok']);
     assertSame('NOT_FOUND', $missing['error']['code']);

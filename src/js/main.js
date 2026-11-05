@@ -41,6 +41,7 @@ form?.addEventListener("submit", async (event) => {
   let keepStatus = false;
   try {
     const created = await createGradeJob(url, strategy);
+    if (activeController !== controller) return;
     if (!created.ok || !created.id) {
       keepStatus = true;
       showError(created.error?.message ?? "Could not start analysis.", created.error?.code);
@@ -49,11 +50,15 @@ form?.addEventListener("submit", async (event) => {
 
     const result = await waitForGrade(created.id, {
       signal: controller.signal,
-      onStatus: (s) => renderLoading(statusPanel, s),
+      onStatus: (s) => {
+        if (activeController !== controller) return;
+        renderLoading(statusPanel, s);
+      },
     });
+    if (activeController !== controller) return;
     showResults(result, { id: created.id });
   } catch (err) {
-    if (err.name === "AbortError") return;
+    if (err.name === "AbortError" || activeController !== controller) return;
     keepStatus = true;
     showError(err.message ?? "Something went wrong.", err.code);
   } finally {
@@ -84,10 +89,19 @@ function refreshHistory() {
     strategy: item.result.strategy,
     savedAt: item.savedAt,
   }));
-  renderHistory(historyPanel, entries, (result) => showResults(result, { remember: false }), () => {
+  renderHistory(historyPanel, entries, openHistoryResult, () => {
     clearHistory();
     refreshHistory();
   });
+}
+
+function openHistoryResult(result) {
+  activeController?.abort();
+  activeController = null;
+  setBusy(false);
+  form?.reset();
+  if (statusPanel) clearPanel(statusPanel);
+  showResults(result, { remember: false });
 }
 
 function showError(message, code = "") {
@@ -99,7 +113,7 @@ function setBusy(busy) {
   form?.setAttribute("aria-busy", busy ? "true" : "false");
   if (submitBtn) {
     submitBtn.disabled = busy;
-    submitBtn.textContent = busy ? "Analyzing…" : "Grade it";
+    submitBtn.textContent = busy ? "Analysing…" : "Grade it";
   }
   if (urlInput) urlInput.disabled = busy;
   form?.querySelectorAll('input[name="strategy"]').forEach((r) => {

@@ -107,6 +107,30 @@ export function clearPanel(container) {
 }
 
 /**
+ * Subheading under Results: the graded URL, with the domain name in bold.
+ *
+ * @param {object} result
+ */
+function analysedLine(result) {
+  const line = el("p", "cg-results-url");
+  const url = typeof result.url === "string" ? result.url : "";
+  const host = typeof result.host === "string" ? result.host : "";
+  const strategy = typeof result.strategy === "string" && result.strategy !== "" ? ` (${result.strategy})` : "";
+  const cached = result.cached ? " · cached result" : "";
+  const at = host === "" ? -1 : url.toLowerCase().indexOf(host.toLowerCase());
+  line.append("Analysed ");
+  if (at >= 0) {
+    line.append(url.slice(0, at));
+    line.appendChild(el("strong", "", url.slice(at, at + host.length)));
+    line.append(url.slice(at + host.length));
+  } else if (url !== "") {
+    line.appendChild(el("strong", "", url));
+  }
+  line.append(`${strategy}${cached}`);
+  return line;
+}
+
+/**
  * Render the full results dashboard.
  *
  * @param {HTMLElement} container
@@ -124,10 +148,7 @@ export function renderResults(container, result, eco, tips = [], actions = {}) {
   const header = el("div", "cg-results-head");
   const title = el("h2", "uk-margin-remove", "Results");
   title.id = "results-heading";
-  const analyzed = el("p", "uk-text-meta uk-margin-remove");
-  const cached = result.cached ? " · cached result" : "";
-  analyzed.textContent = `Analyzed ${result.url} (${result.strategy})${cached}`;
-  header.append(title, analyzed);
+  header.append(title, analysedLine(result));
   grid.appendChild(header);
 
   // — Headline grade —
@@ -277,7 +298,7 @@ export function renderHistory(container, entries, onOpen, onClear) {
     const tone = letter.replace("+", "plus").toLowerCase();
     const badge = el("span", `cg-history-grade cg-grade--${tone}`, letter);
     badge.setAttribute("aria-hidden", "true");
-    const text = el("span", "cg-history-text");
+    const text = el("span", "cg-history-text uk-text-small");
     text.appendChild(el("span", "cg-history-url", entry.url));
     text.appendChild(el("span", "uk-text-meta", `${entry.strategy} · ${formatWhen(entry.savedAt)}`));
     btn.append(badge, text);
