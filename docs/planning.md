@@ -65,6 +65,8 @@ the carbon model, **UIKit 3** frontend. **No build system** (Prepros only).
   - [x] Header title and strapline are centered below 720px and left-aligned from there up (2026-11-03).
   - [x] Recent grades clears the grading form (2026-11-05). The URL field and strategy reset, and an in-progress grade is cancelled so the dashboard matches the row that was opened.
   - [x] UK spelling for analyse, and a larger results subheading with the domain in bold (2026-11-05).
+- [x] **P5.4** done (2026-11-05) — security and docroot audit recorded in `docs/audits.md`. No Critical or High findings.
+- [x] **P5.10** done (2026-11-05) — Open Graph and Twitter card tags. Description matches the meta description. Image is `assets/images/carbon-grader-og.png` (1200×630).
 
 > Run the app: `npm start` → open `http://localhost:8020/`. Live grading needs
 > `PAGESPEED_API_KEY` in `.env`. Full suite: `npm test` (110 tests).
@@ -202,8 +204,11 @@ within a phase are mutually exclusive; phases are ordered by dependency.
 SVG/UIKit progress, no chart lib). Files: `src/assets/css/app.css`, `src/index.html`, `src/js/ui.js`.
 - **P5.2 Result history + shareable link** (localStorage, no sensitive data). Files: `src/js/*`.
 - **P5.3 Tests** (PHPUnit via Composer + browser JS spec runner + fixtures). Files: `tests/`**.
-- [~] **P5.4 Security + docroot audit** (CSP, SSRF cases, secret hygiene, rate
-limits, deny non-public dirs) → log in `docs/audits.md`.
+- [x] **P5.4 Security + docroot audit** (2026-11-05)
+  - Done: review logged in `docs/audits.md`. No Critical or High findings.
+    SSRF checks, secret hygiene, CSP, and the live `src/` docroot hold.
+    Follow-ups: catch unexpected errors in `grade.php`, keep the vhost root
+    on `src/`, and optionally tighten job ids and the rate-limit race.
 - **P5.5 Legal & attribution** (distinct branding vs. Ecograder™; credits for
 Google PSI, Green Web Foundation, CO2.js, UIKit; PSI/GWF ToS check; privacy
 note). Files: `src/index.html`, `docs/audits.md`.
@@ -227,6 +232,12 @@ note). Files: `src/index.html`, `docs/audits.md`.
     v3 table was scoring v4 `perVisit` grams, so typical pages landed on A/A+.
   - Files: `config/scoring.json`, `src/js/scoring-config.js`,
     `tests/CarbonTest.mjs`, `tests/ScoreTest.mjs`, `docs/architecture.md`.
+- [x] **P5.10 Open Graph tags** (2026-11-05)
+  - Done: homepage head carries `og:title`, `og:description` (same text as
+    `meta name="description"`), `og:url`, and `og:image` for
+    `https://grader.byintention.co/assets/images/carbon-grader-og.png`
+    (1200×630), plus a Twitter large-image card using the same copy.
+  - Files: `src/index.html`.
 - [x] **P5.9 Vendor UIKit CSS** (2026-10-27)
   - Done: UIKit 3.21.6 `uikit.min.css` (271 KB, data-URI images only) lives at
     `src/assets/css/vendor/uikit.min.css`, pinned in `VERSION`. The page links

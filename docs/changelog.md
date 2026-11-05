@@ -8,6 +8,10 @@ See `.cursor/rules/200-changelog.mdc` for the workflow.
 
 ## [Unreleased]
 
+### Added
+- 2026-11-05 — Open Graph and Twitter card tags on the homepage. The share description matches the meta description, and the image is `assets/images/carbon-grader-og.png`.
+- 2026-11-05 — Security and docroot audit (P5.4) recorded in `docs/audits.md`. No product behavior change.
+
 ### Changed
 - 2026-11-05 — Copy uses UK spelling: analyse, analysed, and analysing. The line under Results is 125% of the body size, and the domain name is bold.
 - 2026-11-03 — The header title and strapline are centered on screens narrower than 720px.
